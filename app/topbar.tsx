@@ -7,8 +7,10 @@ import "./css/styles.css";
 */}
 
 export default function TopBar() {
+    {/* Return the entire top bar, essentially as an object (component) */}
     return (
         <div id="topbar-wrapper" className="flex items-center gap-3">
+            {/* Clicking the logo navigates back to root page */}
             <Link href="/">
                 <Image
                     id="topbar-logo"
