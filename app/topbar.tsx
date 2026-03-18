@@ -12,8 +12,8 @@ export default function TopBar() {
                 id="topbar-logo"
                 src="/logo.svg"
                 alt="top nav bar"
-                width={120}
-                height={40}
+                width={200}
+                height={80}
             />
             <p>sample topbar text</p>
         </div>
