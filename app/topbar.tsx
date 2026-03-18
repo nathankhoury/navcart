@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import "./css/styles.css";
 
 {/*
@@ -8,13 +9,15 @@ import "./css/styles.css";
 export default function TopBar() {
     return (
         <div id="topbar-wrapper" className="flex items-center gap-3">
-            <Image
-                id="topbar-logo"
-                src="/logo.svg"
-                alt="top nav bar"
-                width={200}
-                height={80}
-            />
+            <Link href="/">
+                <Image
+                    id="topbar-logo"
+                    src="/logo.svg"
+                    alt="top nav bar"
+                    width={200}
+                    height={80}
+                />
+            </Link>
             <p>sample topbar text</p>
         </div>
     );
