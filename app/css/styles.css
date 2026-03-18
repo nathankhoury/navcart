@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+/* Element Selectors (e.g. <div>, <p>, <span>, etc.) */
+
+/* Class Selectors */
+
+/* ID Selectors */
+#topbar-wrapper {
+    display: flex;
+    width: 100%;
+    height: auto;
+    color: white;
+    background-color: #1A2B3C;
+    justify-content: flex-start;
+    padding: 8px;
+    gap: 8px;
+}
+
+#topbar-logo {
+    margin: 10px;
+}
