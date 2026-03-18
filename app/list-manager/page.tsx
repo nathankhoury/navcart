@@ -1,4 +1,5 @@
-import "./styles.css";
+import TopBar from "../topbar";
+import "../css/styles.css";
 
 {/*
     page.tsx is the file that defines the content of the page at the route /list-manager,
@@ -9,8 +10,9 @@ import "./styles.css";
 export default function ListManager() {
     {/* return one single parent div (or other element, but div wrapper seems to work best) */}
     return (
-        <div id="lm-page-wrapper" className="flex bg-white text-black">
+        <div id="lm-page-wrapper" className="bg-white text-black">
             <div>
+                <TopBar/>
                 <p>this is a dummy list management page</p>
             </div>
         </div>
