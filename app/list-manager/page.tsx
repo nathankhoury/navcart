@@ -1,6 +1,13 @@
 import TopBar from "../topbar";
 import "../css/styles.css";
 
+{/* 
+    Considering for search bar:
+    https://flowbite.com/docs/forms/search-input/
+    https://www.material-tailwind.com/docs/html/input-search
+    https://tomdekan.com/articles/react-search-bar?ref=r-react
+*/}
+
 {/*
     page.tsx is the file that defines the content of the page at the route /list-manager,
     think of it like the main body of the page, and other .tsx files in the same directory
@@ -14,10 +21,12 @@ export default function ListManager() {
             <TopBar/>
             <div id="lm-content-wrapper">    
                 <div id="left" className="list-management-panel">
-                    <p>left side of page</p>
+                    <h1 className="panel-header text-4xl font-bold text-heading">Search Items</h1>
+                    <p className="tracking-widest text-lg text-gray-600">Click items to add them to your list</p>
                 </div>
                 <div id="right" className="list-management-panel">
-                    <p>right side of page</p>
+                    <h1 className="panel-header text-4xl font-bold text-headingr">Your List</h1>
+                    <p className="tracking-widest text-lg text-gray-600">Click items to remove them from your list</p>
                 </div>
             </div>
         </div>
