@@ -7,7 +7,7 @@ import "./css/styles.css";
 */}
 
 export default function TopBar() {
-    {/* Return the entire top bar, essentially as an object (component) */}
+    {/* Return the entire top bar, essentially as an object (component) */ }
     return (
         <div id="topbar-wrapper" className="flex items-center gap-3">
             {/* Clicking the logo navigates back to root page */}
@@ -20,7 +20,22 @@ export default function TopBar() {
                     height={80}
                 />
             </Link>
-            <p>sample topbar text</p>
+            <div className="dropdown">
+                <button className="dropbtn">Select Store Location
+                    <i className="fa fa-caret-down"></i>
+                </button>
+                <div className="dropdown-content">
+                    <a href="#">Location 1</a>
+                    <a href="#">Location 2</a>
+                    <a href="#">Location 3</a>
+                </div>
+            </div>
+            {/* Profile icon PLACEHOLDER on the right side of the top bar */}
+            <div className="profile-icon">
+                <button className="profile-btn">Img
+                    <i className="fa fa-caret-down"></i>
+                </button>
+            </div>
         </div>
     );
 }

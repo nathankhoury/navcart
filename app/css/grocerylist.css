@@ -1,0 +1,65 @@
+.gl-sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 340px;
+  min-width: 280px;
+  height: 100%;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  overflow: hidden;
+}
+
+.gl-sticky-top {
+  flex-shrink: 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.gl-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 20px 12px;
+}
+
+.gl-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.gl-manage-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 20px 16px;
+  padding: 10px 0;
+  background: #4caf65;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.gl-manage-btn:hover {
+  background: #3d9955;
+  transform: translateY(-1px);
+}
+
+.gl-manage-btn:active {
+  transform: translateY(0);
+}
+
+.gl-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px 24px;
+  gap: 4px;
+}

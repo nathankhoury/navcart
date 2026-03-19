@@ -19,3 +19,68 @@
 #topbar-logo {
     margin: 10px;
 }
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    margin-left: auto;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropbtn {
+    background-color: #3F5060;
+    border-radius: 10px;
+    border-width: 1px;
+    border-color: #6C90BF;
+    color: white;
+    padding: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 300px;
+    text-align: left;
+}
+
+.dropbtn:hover {
+    background-color: #323E4A;
+    border-radius: 10px;
+}
+
+.dropdown-content {
+    background-color: #3F5060;
+    border-radius: 10px;
+    border-color: #6C90BF;
+    border-width: 1px;
+    display: none;
+    position: absolute;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    width: 300px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #323E4A;
+    border-radius: 10px;
+}
+
+/* Profile  Placeholder */
+
+.profile-btn {
+    background-color: #4CAF50;
+    border-radius: 30px;
+    width: 50px;
+    height: 50px;
+    margin-right: 20px;
+}
