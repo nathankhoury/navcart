@@ -20,13 +20,18 @@ export default function ListManager() {
         <div id="lm-page-wrapper" className="bg-white text-black">
             <TopBar/>
             <div id="lm-content-wrapper">    
+                {/* The left half of the screen is represented here */}
                 <div id="left" className="list-management-panel">
                     <h1 className="panel-header text-4xl font-bold text-heading">Search Items</h1>
                     <p className="tracking-widest text-lg text-gray-600">Click items to add them to your list</p>
                 </div>
+                {/* The right half of the screen is represented here */}
                 <div id="right" className="list-management-panel">
                     <h1 className="panel-header text-4xl font-bold text-headingr">Your List</h1>
                     <p className="tracking-widest text-lg text-gray-600">Click items to remove them from your list</p>
+                    <div>
+                        {/* the three main buttons for list controls are collected here*/}
+                    </div>
                 </div>
             </div>
         </div>
