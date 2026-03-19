@@ -14,6 +14,12 @@
     margin-bottom: 30px;
 }
 
+.listControlButton {
+    background-color: #ccc;
+    color: black;
+    margin: 10px;
+}
+
 /* ID Selectors */
 #topbar-wrapper {
     width: 100%;
@@ -44,4 +50,43 @@
     display: inline-block;
     width: 50vw;
     border: black solid 2px;
+}
+
+#saveListButton {
+    background-color: #8be88e;
+    color: black;
+}
+
+#saveListButton:hover {
+    background-color: #70b772;
+}
+
+#saveListButton:active {
+    background-color: #477249;
+}
+
+#loadListButton {
+    background-color: #97c1f1;
+    color: black;
+}
+
+#loadListButton:hover {
+    background-color: #6989ab;
+}
+
+#loadListButton:active {
+    background-color: #3b4e7a;
+}
+
+#clearListButton {
+    background-color: #e18b8b;
+    color: black;
+}
+
+#clearListButton:hover {
+    background-color: #ab6969;
+}
+
+#clearListButton:active {
+    background-color: #7a4747;
 }

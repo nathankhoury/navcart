@@ -18,19 +18,25 @@ export default function ListManager() {
     {/* return one single parent div (or other element, but div wrapper seems to work best) */}
     return (
         <div id="lm-page-wrapper" className="bg-white text-black">
+            {/* Drop in the top bar component */}
             <TopBar/>
+
             <div id="lm-content-wrapper">    
                 {/* The left half of the screen is represented here */}
                 <div id="left" className="list-management-panel">
                     <h1 className="panel-header text-4xl font-bold text-heading">Search Items</h1>
                     <p className="tracking-widest text-lg text-gray-600">Click items to add them to your list</p>
                 </div>
+                
                 {/* The right half of the screen is represented here */}
                 <div id="right" className="list-management-panel">
                     <h1 className="panel-header text-4xl font-bold text-headingr">Your List</h1>
                     <p className="tracking-widest text-lg text-gray-600">Click items to remove them from your list</p>
                     <div>
                         {/* the three main buttons for list controls are collected here*/}
+                        <button id="saveListButton" className="listControlButton font-bold py-2 px-4 rounded">Save List</button>
+                        <button id="loadListButton" className="listControlButton font-bold py-2 px-4 rounded">Load List</button>
+                        <button id="clearListButton" className="listControlButton font-bold py-2 px-4 rounded">Clear List</button>
                     </div>
                 </div>
             </div>
