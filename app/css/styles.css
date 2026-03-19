@@ -6,6 +6,12 @@
 .list-management-panel {
     margin-left: auto;
     margin-right: auto;
+    text-align: center;
+}
+
+.panel-header {
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 /* ID Selectors */
