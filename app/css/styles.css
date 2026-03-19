@@ -3,10 +3,13 @@
 /* Element Selectors (e.g. <div>, <p>, <span>, etc.) */
 
 /* Class Selectors */
+.list-management-panel {
+    margin-left: auto;
+    margin-right: auto;
+}
 
 /* ID Selectors */
 #topbar-wrapper {
-    display: flex;
     width: 100%;
     height: auto;
     color: white;
@@ -83,4 +86,21 @@
     width: 50px;
     height: 50px;
     margin-right: 20px;
+}
+
+#lm-content-wrapper {
+    display: flex;
+    height: 100vh;
+}
+
+#left {
+    display: inline-block;
+    width: 50vw;
+    border: black solid 2px;
+}
+
+#right {
+    display: inline-block;
+    width: 50vw;
+    border: black solid 2px;
 }

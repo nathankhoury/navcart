@@ -11,9 +11,14 @@ export default function ListManager() {
     {/* return one single parent div (or other element, but div wrapper seems to work best) */}
     return (
         <div id="lm-page-wrapper" className="bg-white text-black">
-            <div>
-                <TopBar/>
-                <p>this is a dummy list management page</p>
+            <TopBar/>
+            <div id="lm-content-wrapper">    
+                <div id="left" className="list-management-panel">
+                    <p>left side of page</p>
+                </div>
+                <div id="right" className="list-management-panel">
+                    <p>right side of page</p>
+                </div>
             </div>
         </div>
     );
