@@ -1,5 +1,3 @@
-Instant food products
-UHT-milk
 abrasive cleaner
 artif. sweetener
 baby cosmetics
@@ -74,7 +72,9 @@ house keeping products
 hygiene articles
 ice cream
 instant coffee
+instant food products
 jam
+jelly
 ketchup
 kitchen towels
 kitchen utensil
@@ -105,6 +105,7 @@ packaged fruit/vegetables
 pasta
 pastry
 pet care
+peanut butter
 photo/film
 pickled vegetables
 pip fruit
@@ -156,6 +157,7 @@ tidbits
 toilet cleaner
 tropical fruit
 turkey
+uht-milk
 vinegar
 waffles
 whipped/sour cream
