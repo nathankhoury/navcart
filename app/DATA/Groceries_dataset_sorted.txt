@@ -7,16 +7,13 @@ bathroom cleaner
 beef
 berries
 beverages
-bottled beer
-bottled water
-brandy
-brown bread
+water
+bread
 butter
 butter milk
-cake bar
+cake
 candles
 candy
-canned beer
 canned fish
 canned fruit
 canned vegetables
@@ -141,7 +138,7 @@ soda
 soft cheese
 softener
 soups
-sparkling wine
+sparkling water
 specialty bar
 specialty cheese
 specialty chocolate
