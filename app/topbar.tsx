@@ -20,7 +20,11 @@ export default function TopBar() {
                     height={80}
                 />
             </Link>
-            <p>sample topbar text</p>
+            <Link 
+                className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[5] px-5 transition-colors hover:border-transparent hover:bg-[#58b03f] md:w-[158px]"
+                href="/list-manager">
+              Manage List
+            </Link>
         </div>
     );
 }
