@@ -8,6 +8,8 @@
 *                       "isCold":   *boolean value for if the item needs to be refridgerated/frozen*,
 *                       }
 *   For right now, focus on the file Grocery_dataset_sorted.txt and converting those items into this format
+*   
+*   Template: Inventory[""] = {"id":, "name": "", "location": "", "code": "", "category": "", "isCold": false}
 */
 
 var Inventory = [];
