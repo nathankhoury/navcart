@@ -90,3 +90,38 @@
 #clearListButton:active {
     background-color: #7a4747;
 }
+
+#searchWrapper, #listContentsWrapper {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#searchBox {
+    width: 100%;
+    outline: solid 2px #1A2B3C;
+    opacity: 70%;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+}
+
+#searchResults, #listContents {
+    max-height: 70vh;
+    overflow-y: auto;
+    border: #DDD solid 1px;
+}
+
+#searchResults>*, #listContents>* {
+    text-align: left;
+    align-items: start;
+    margin: 20px;
+}
+
+#itemNameDisplayed {
+    font-weight: bold;
+}
+
+#itemLoc {
+    font-weight: lighter;
+}

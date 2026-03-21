@@ -15,7 +15,7 @@
 *   Template: Inventory[""] = {"id":, "name": "", "location": "", "code": "", "category": "", "isCold": false}
 */
 
-var Inventory = {};
+export const Inventory = {};
 Inventory["abrasive cleaner"] =         {"id": 1, "name": "Abrasive Cleaner", "location": "Aisle 15", "code": "A15", "category": "Grocery", "isCold": false}
 Inventory["artificial sweetener"] =     {"id": 2, "name": "Artificial Sweetener", "location": "Aisle 7", "code": "A7", "category": "Grocery", "isCold": false}
 Inventory["baby cosmetics"] =           {"id": 3, "name": "Baby Cosmetics", "location": "Aisle 12", "code": "A12", "category": "Grocery", "isCold": false}
