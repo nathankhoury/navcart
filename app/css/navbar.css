@@ -1,0 +1,228 @@
+/* ---------- Main topbar container ---------- */
+#topbar-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background-color: #1A2B3C;
+    padding: 6px 10px;
+    gap: 6px;
+    color: white;
+    box-sizing: border-box;
+    overflow: visible;
+    position: relative;
+    z-index: 100;
+}
+
+#topbar-logo {
+    margin: 2px;
+    width: 100px !important;
+    height: auto !important;
+}
+
+/* ---------- Nav links ---------- */
+#topbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.topbar-nav-link {
+    color: #cbd5e1;
+    font-size: 12px;
+    font-weight: 500;
+    font-synthesis: none;
+    font-variation-settings: "wght" 500;
+    padding: 5px 7px;
+    border-radius: 8px;
+    text-decoration: none;
+    white-space: nowrap;
+    margin: 1px;
+    transition: background 0.15s ease, color 0.15s ease;
+    line-height: 1.4;
+}
+
+.topbar-nav-link:hover {
+    background-color: #2e4057;
+    color: white;
+}
+
+.topbar-nav-link--active {
+    background-color: #2e4057;
+    color: white;
+}
+
+/* ---------- Location dropdown ---------- */
+.topbar-dropdown {
+    position: relative;
+    margin-left: auto;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.topbar-dropbtn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    background-color: #3F5060;
+    border-radius: 10px;
+    border: 1px solid #6C90BF;
+    color: white;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    font-synthesis: none;
+    cursor: pointer;
+    width: 130px;
+    min-width: 0;
+    transition: background-color 0.15s ease;
+    overflow: hidden;
+}
+
+.topbar-dropbtn span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.topbar-dropbtn:hover,
+.topbar-dropbtn--open {
+    background-color: #323E4A;
+}
+
+.topbar-caret {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.topbar-caret--open {
+    transform: rotate(180deg);
+}
+
+.topbar-dropdown-content {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    background-color: #3F5060;
+    border-radius: 10px;
+    border: 1px solid #6C90BF;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    z-index: 50;
+    width: 200px;
+    overflow: hidden;
+}
+
+.topbar-dropdown-item {
+    display: block;
+    width: 100%;
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    font-synthesis: none;
+    transition: background-color 0.12s ease;
+}
+
+.topbar-dropdown-item:hover {
+    background-color: #323E4A;
+}
+
+.topbar-dropdown-item--selected {
+    background-color: #2a353f;
+}
+
+/* ---------- Profile button ---------- */
+.topbar-profile-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background-color: #4CAF50;
+    border-radius: 50%;
+    color: white;
+    margin-left: 4px;
+    flex-shrink: 0;
+    transition: background-color 0.15s ease;
+    text-decoration: none;
+}
+
+.topbar-profile-btn:hover {
+    background-color: #3d9955;
+}
+
+/* ---------- Tablet 640px+ ---------- */
+@media (min-width: 640px) {
+    #topbar-wrapper {
+        padding: 8px 14px;
+        gap: 10px;
+    }
+
+    #topbar-logo {
+        width: 130px !important;
+    }
+
+    .topbar-nav-link {
+        font-size: 13px;
+        padding: 5px 10px;
+    }
+
+    .topbar-dropbtn {
+        width: 200px;
+        font-size: 13px;
+        padding: 7px 12px;
+    }
+
+    .topbar-dropdown-content {
+        width: 200px;
+    }
+
+    .topbar-profile-btn {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+/* ---------- Desktop 1024px+ ---------- */
+@media (min-width: 1024px) {
+    #topbar-wrapper {
+        padding: 8px 20px;
+        gap: 16px;
+    }
+
+    #topbar-logo {
+        width: 160px !important;
+    }
+
+    .topbar-nav-link {
+        font-size: 14px;
+        padding: 6px 14px;
+    }
+
+    .topbar-dropbtn {
+        width: 280px;
+        font-size: 15px;
+        padding: 8px 14px;
+    }
+
+    .topbar-dropdown-content {
+        width: 280px;
+    }
+
+    .topbar-dropdown-item {
+        font-size: 14px;
+        padding: 11px 16px;
+    }
+
+    .topbar-profile-btn {
+        width: 32px;
+        height: 32px;
+        margin-left: 8px;
+    }
+}

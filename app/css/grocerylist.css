@@ -1,0 +1,362 @@
+/* ---------- Sidebar container ----------*/
+.gl-sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    border-right: 2px solid #c1c4c9;
+    overflow: hidden;
+}
+
+/* ---------- Sticky top ---------- */
+.gl-sticky-top {
+    flex-shrink: 0;
+    padding-bottom: 4px;
+    border-bottom: 2px solid #c1c4c9;
+    background: #ffffff;
+}
+
+.gl-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 12px 8px;
+}
+
+.gl-title {
+    font-family: var(--font-syne);
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.gl-badge {
+    background: #4caf65;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 999px;
+    white-space: nowrap;
+    margin-left: auto;
+}
+
+.gl-manage-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 12px 10px;
+    padding: 5px 0;
+    background: #4caf65;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.gl-manage-btn:hover {
+    background: #3d9955;
+    transform: translateY(-1px);
+}
+
+/* ---------- Scrollable list ---------- */
+.gl-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 6px 10px 20px;
+    background: #F3F4F6;
+    gap: 4px;
+}
+
+/* Empty state */
+.gl-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 40px 16px;
+    color: #9ca3af;
+    font-size: 14px;
+    text-align: center;
+}
+
+.gl-empty a {
+    color: #4caf65;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.gl-empty a:hover {
+    text-decoration: underline;
+}
+
+/* ---------- Category groups ---------- */
+.gl-category {
+    margin-bottom: 4px;
+    border-bottom: 1px solid #c1c4c9;
+}
+
+/* Clickable header */
+.gl-category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 7px 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.12s ease;
+    margin-bottom: 3px;
+}
+
+.gl-category-header:hover {
+    background: #f3f4f6;
+}
+
+.gl-category-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.gl-category-emoji {
+    font-size: 14px;
+}
+
+.gl-category-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: #6b7280;
+    text-transform: uppercase;
+}
+
+/* for example, "1/3" checked vs total */
+.gl-category-count {
+    font-size: 10px;
+    color: #9ca3af;
+    margin-left: 2px;
+}
+
+.gl-collapse-icon {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.gl-collapse-icon--closed {
+    transform: rotate(-90deg);
+}
+
+/* ---------- Individual items ---------- */
+.gl-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 9px 8px;
+    background: #f9fafb;
+    border: 1px solid #c1c4c9;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.12s ease, border-color 0.12s ease;
+    margin-bottom: 4px;
+}
+
+.gl-item:hover {
+    background: #f0fdf4;
+    border-color: #8ddda9;
+}
+
+.gl-item--checked {
+    background: #f0fdf4;
+    border-color: #d1fae5;
+    opacity: 0.75;
+}
+
+/* Checkbox circle */
+.gl-circle {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.gl-circle--checked {
+    background: #4caf65;
+    border-color: #4caf65;
+}
+
+.gl-check-icon {
+    width: 12px;
+    height: 12px;
+}
+
+/* Item text */
+.gl-item-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.gl-item-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #444444;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.15s ease;
+}
+
+.gl-item--checked .gl-item-name {
+    text-decoration: line-through;
+    color: #9ca3af;
+}
+
+.gl-item-aisle {
+    font-size: 11px;
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+.gl-item--checked .gl-item-aisle {
+    color: #d1d5db;
+}
+
+/* Aisle code badge */
+.gl-aisle-code {
+    flex-shrink: 0;
+    background: #4caf65;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+
+.gl-item--checked .gl-aisle-code {
+    background: #d1d5db;
+}
+
+/* ---------- Tablet 640px+ ---------- */
+@media (min-width: 640px) {
+    .gl-sidebar {
+        width: 280px;
+    }
+
+    .gl-header {
+        padding: 16px 16px 10px;
+    }
+
+    .gl-title {
+        font-size: 18px;
+    }
+
+    .gl-badge {
+        font-size: 11px;
+        padding: 2px 8px;
+    }
+
+    .gl-manage-btn {
+        margin: 0 16px 12px;
+        padding: 6px 0;
+        font-size: 13px;
+    }
+
+    .gl-list {
+        padding: 8px 10px 22px;
+    }
+}
+
+/* ---------- Desktop 1024px+ ---------- */
+@media (min-width: 1024px) {
+    .gl-sidebar {
+        width: 340px;
+    }
+
+    .gl-header {
+        padding: 20px 20px 12px;
+    }
+
+    .gl-title {
+        font-size: 22px;
+    }
+
+    .gl-badge {
+        font-size: 12px;
+        padding: 3px 10px;
+    }
+
+    .gl-manage-btn {
+        margin: 0 20px 14px;
+        padding: 7px 0;
+        font-size: 14px;
+    }
+
+    .gl-list {
+        padding: 8px 12px 24px;
+    }
+
+    .gl-category-label {
+        font-size: 11px;
+    }
+
+    .gl-category-count {
+        font-size: 11px;
+    }
+
+    .gl-item {
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .gl-circle {
+        width: 20px;
+        height: 20px;
+    }
+
+    .gl-item-name {
+        font-size: 14px;
+    }
+
+    .gl-item-aisle {
+        font-size: 12px;
+    }
+
+    .gl-aisle-code {
+        font-size: 11px;
+        padding: 3px 8px;
+    }
+}
+
+/* ---------- Scrollbar ---------- */
+.gl-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.gl-list::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 999px;
+}
+
+.gl-list::-webkit-scrollbar-track {
+    background: transparent;
+}
