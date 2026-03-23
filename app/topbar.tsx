@@ -47,7 +47,7 @@ const LOCATIONS = ["40 Federal St, Lynn", "Location 2", "Location 3"];
 // Nav links - add more here if needed
 const NAV_LINKS = [
     { href: "/",             label: "Home"        },
-    { href: "/map",          label: "Map"         },
+    { href: "/store-map",    label: "Store Map"   },
     { href: "/list-manager", label: "Manage List" },
     { href: "/help",         label: "Help"        },
     { href: "/profile",      label: "Profile"     },
