@@ -174,3 +174,4 @@ Inventory["white bread"] =				{"id": 155, "name": "White Bread", "location": "",
 Inventory["whole milk"] =				{"id": 156, "name": "Whole Milk", "location": "", "code": "", "category": "Dairy", "isCold": true};
 Inventory["yogurt"] =			    	{"id": 157, "name": "Yogurt", "location": "", "code": "", "category": "Dairy", "isCold": true};
 Inventory["zwieback"] =				    {"id": 158, "name": "Zwieback", "location": "", "code": "", "category": "Bakery", "isCold": false};
+export default Inventory;
