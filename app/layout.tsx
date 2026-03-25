@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Syne, DM_Sans } from "next/font/google";
 import "./globals.css";
+import { ProfileProvider } from "./context/ProfileContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,16 +30,14 @@ export const metadata: Metadata = {
   description: "Grocery Route Vizualizer",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${dmSans.variable} antialiased`}>
-        {children}
-      </body>
-    </html>
-  );
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+    return (
+        <html lang="en">
+            <body>
+                <ProfileProvider>
+                    {children}
+                </ProfileProvider>
+            </body>
+        </html>
+    );
 }

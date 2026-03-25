@@ -36,7 +36,7 @@ return (
         <div className="overflow-x-auto">
             <div
             className="relative mx-auto rounded-lg border-2 border-gray-400 bg-gray-50"
-            style={{ width: "1000px", height: "620px" }}
+            style={{ width: "1100px", height: "650px" }}
             >
                 {marketBasketSections.map((section: StoreSection) => {
                     const isHighlighted = highlightedCodes.has(section.code);
