@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import { useProfile } from "./context/ProfileContext";
 import "./css/navbar.css";
 
 /*
@@ -57,7 +58,14 @@ export default function TopBar() {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [selected, setSelected] = useState<string | null>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
-
+    const { profilePicUrl, displayName } = useProfile();
+    const initials = displayName
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+    
     // usePathname lets us highlight whichever page is currently active
     const pathname = usePathname();
 
@@ -138,12 +146,19 @@ export default function TopBar() {
 
             {/* Profile icon - links to /profile page */}
             <Link href="/profile" className="topbar-profile-btn" title="Profile / Settings">
-                <Image
-                    src="/account_circle_28dp_FFFFFF.svg"
-                    alt="Profile"
-                    width={24}
-                    height={24}
-                />
+                {profilePicUrl ? (
+                    <div className="topbar-avatar">
+                        <Image
+                            src={profilePicUrl}
+                            alt="Profile"
+                            fill
+                            className="object-cover"
+                            sizes="30px"
+                        />
+                    </div>
+                ) : (
+                    <span className="topbar-avatar-initials">{initials}</span>
+                )}
             </Link>
         </div>
     );
