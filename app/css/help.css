@@ -1,0 +1,74 @@
+/* ---------- Help page ---------- */
+
+.help-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: #ffffff;
+    color: #111827;
+    overflow: hidden;
+}
+
+.help-main {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.help-container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 24px;
+}
+
+/* ---------- Header ---------- */
+.help-title {
+    font-family: var(--font-syne);
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 6px;
+}
+
+.help-subtitle {
+    font-size: 14px;
+    color: #3F5060;
+    margin: 0 0 40px;
+}
+
+/* ---------- Sections ---------- */
+.help-section {
+    margin-bottom: 36px;
+}
+
+.help-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: #1a1a1a;
+}
+
+.help-section-text {
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.help-divider {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin-bottom: 36px;
+}
+
+/* ---------- Scrollbar ---------- */
+.help-main::-webkit-scrollbar {
+    width: 5px;
+}
+
+.help-main::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 999px;
+}
+
+.help-main::-webkit-scrollbar-track {
+    background: transparent;
+}
