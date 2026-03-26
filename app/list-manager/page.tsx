@@ -163,7 +163,7 @@ export default function ListManager() {
         if (!q) return list;
 
         return list.filter((key) => {
-            const item = Inventory[key];
+            const item = Inventory[key as keyof typeof Inventory];
             return (
                 item.name.toLowerCase().includes(q) ||
                 (item.category && item.category.toLowerCase().includes(q)) ||
@@ -478,7 +478,7 @@ export default function ListManager() {
                     <div id="listContentsWrapper">
                         <ul id="listContents" className="list-none pl-0">
                             {filteredList.map((key) => {
-                                const item = Inventory[key];
+                                const item = Inventory[key as keyof typeof Inventory];
                                 return (
                                     <li key={item.id}>
                                         <button
