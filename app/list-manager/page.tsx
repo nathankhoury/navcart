@@ -264,6 +264,7 @@ export default function ListManager() {
 
         setList([]);
         localStorage.removeItem("navcart-current-list");
+        localStorage.setItem("navcart-current-list", JSON.stringify(list));   // store empty list to maintain persistence after refresh
         setToastMessage("Current list cleared");
     };
 
