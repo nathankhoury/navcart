@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import Inventory from "../DATA/data_final";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import "../css/grocerylist.css";
 
@@ -45,6 +46,7 @@ import "../css/grocerylist.css";
 
     Contributors for this file:
     Camila Salinas (last modified: 3/22/2026)
+    Nathan Khoury (last modified: 4/1/2026)
 */
 
 // This type matches the shape of items in DATA/data_final.js
@@ -62,25 +64,6 @@ type CategoryGroup = {
     emoji: string;
     items: GroceryItem[];
 };
-
-/*
-  PLACEHOLDER DATA
-
-  These items are hardcoded just to show how the list will look.
-  Replace this array with real data once save/load is working.
-  The shape of each object matches data_final.js.
-*/
-const PLACEHOLDER_ITEMS: GroceryItem[] = [
-    { id: 8, name: "Berries", location: "Produce Department", code: "PROD", category: "Produce", isCold: true },
-    { id: 26, name: "Citrus Fruit", location: "Produce Department", code: "PROD", category: "Produce", isCold: true },
-    { id: 12, name: "Butter", location: "Aisle 1", code: "A1", category: "Dairy", isCold: true },
-    { id: 34, name: "Cream", location: "Aisle 1", code: "A1", category: "Dairy", isCold: true },
-    { id: 7, name: "Beef", location: "Meat Department", code: "MEAT", category: "Meat", isCold: true },
-    { id: 23, name: "Chicken", location: "Meat Department", code: "MEAT", category: "Meat", isCold: true },
-    { id: 11, name: "Bread", location: "Aisle 18", code: "A18", category: "Bakery", isCold: false },
-    { id: 21, name: "Cereals", location: "Aisle 4", code: "A4", category: "Grocery", isCold: false },
-    { id: 30, name: "Coffee", location: "Aisle 7", code: "A7", category: "Grocery", isCold: false },
-];
 
 /*
   CATEGORY_INFO
@@ -122,10 +105,8 @@ function groupByCategory(items: GroceryItem[]): CategoryGroup[] {
 }
 
 export default function GroceryList() {
-    /*
-      TODO: Replace PLACEHOLDER_ITEMS with real data when save/load is ready.
-    */
-    const items: GroceryItem[] = PLACEHOLDER_ITEMS;
+    // Load current list of items into state - initially empty until we load from localStorage in useEffect
+    const [items, setItems] = useState<GroceryItem[]>([]);
 
     // Tracks which item IDs have been checked off by the user
     const [checked, setChecked] = useState<Set<number>>(new Set());
@@ -153,6 +134,30 @@ export default function GroceryList() {
 
     const groups = groupByCategory(items);
     const remaining = items.length - checked.size;
+
+
+    useEffect(() => {
+        // retrieve saved list
+        const saved = localStorage.getItem("navcart-current-list");
+
+        // abort if nothing saved
+        if (!saved) return;
+
+        // parse the saved list, which is an array of item keys
+        try {
+            const parsed: string[] = JSON.parse(saved);
+
+            // convert keys into actual GroceryItem objects
+            const mappedItems: GroceryItem[] = parsed
+                .map((key) => Inventory[key as keyof typeof Inventory])
+                .filter(Boolean);
+            
+                // write to state
+            setItems(mappedItems);
+        } catch {
+            console.error("Failed to load grocery list");
+        }
+    }, []);
 
     return (
         <aside className="gl-sidebar">
