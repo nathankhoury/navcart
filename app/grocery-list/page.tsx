@@ -66,25 +66,6 @@ type CategoryGroup = {
 };
 
 /*
-  PLACEHOLDER DATA
-
-  These items are hardcoded just to show how the list will look.
-  Replace this array with real data once save/load is working.
-  The shape of each object matches data_final.js.
-*/
-const PLACEHOLDER_ITEMS: GroceryItem[] = [
-    { id: 8, name: "Berries", location: "Produce Department", code: "PROD", category: "Produce", isCold: true },
-    { id: 26, name: "Citrus Fruit", location: "Produce Department", code: "PROD", category: "Produce", isCold: true },
-    { id: 12, name: "Butter", location: "Aisle 1", code: "A1", category: "Dairy", isCold: true },
-    { id: 34, name: "Cream", location: "Aisle 1", code: "A1", category: "Dairy", isCold: true },
-    { id: 7, name: "Beef", location: "Meat Department", code: "MEAT", category: "Meat", isCold: true },
-    { id: 23, name: "Chicken", location: "Meat Department", code: "MEAT", category: "Meat", isCold: true },
-    { id: 11, name: "Bread", location: "Aisle 18", code: "A18", category: "Bakery", isCold: false },
-    { id: 21, name: "Cereals", location: "Aisle 4", code: "A4", category: "Grocery", isCold: false },
-    { id: 30, name: "Coffee", location: "Aisle 7", code: "A7", category: "Grocery", isCold: false },
-];
-
-/*
   CATEGORY_INFO
 
   Defines the emoji and sort order for each category.
@@ -124,9 +105,7 @@ function groupByCategory(items: GroceryItem[]): CategoryGroup[] {
 }
 
 export default function GroceryList() {
-    /*
-      In Progress: Replace PLACEHOLDER_ITEMS with real data when save/load is ready.
-    */
+    // Load current list of items into state - initially empty until we load from localStorage in useEffect
     const [items, setItems] = useState<GroceryItem[]>([]);
 
     // Tracks which item IDs have been checked off by the user

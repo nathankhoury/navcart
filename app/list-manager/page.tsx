@@ -44,8 +44,17 @@ export default function ListManager() {
       Current active grocery list being edited on the RIGHT side
       Stores item keys that correspond to Inventory[key]
     */
-    const [list, setList] = useState<string[]>([]);
-
+    const [list, setList] = useState<string[]>(() => {
+        // Initialize list from localStorage if available, otherwise start with empty list
+        // safety check:
+        if (typeof window === "undefined") return [];
+        try {
+            const saved = localStorage.getItem("navcart-current-list");
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            return [];
+        }
+    });
     
     //  Name used when saving a list
     
@@ -84,6 +93,7 @@ export default function ListManager() {
     //  Loads the current active list from localStorage when the page first opens
     
     useEffect(() => {
+        console.log("DEBUG - Loading current list from localStorage...");
         const saved = localStorage.getItem("navcart-current-list");
 
         if (saved) {
@@ -258,13 +268,9 @@ export default function ListManager() {
       Only clears the list being edited, not all saved lists
     */
     const clearCurrentList = () => {
-        const confirmed = window.confirm("Are you sure you want to clear the list you are currently editing?");
-
-        if (!confirmed) return;
+        if (!window.confirm("Are you sure you want to clear the list you are currently editing?")) return;
 
         setList([]);
-        localStorage.removeItem("navcart-current-list");
-        localStorage.setItem("navcart-current-list", JSON.stringify(list));   // store empty list to maintain persistence after refresh
         setToastMessage("Current list cleared");
     };
 
