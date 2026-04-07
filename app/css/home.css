@@ -1,0 +1,128 @@
+/* ---------- Home page wrapper ---------- */
+.home-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    background: #ffffff;
+    color: #111827;
+}
+
+/* ---------- Main content area ---------- */
+.home-main {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ---------- Grocery list ---------- */
+/* Full width on mobile */
+.home-list {
+    flex-shrink: 0;
+    height: 100%;
+    width: 100%;
+}
+
+/* ---------- Map panel ---------- */
+.home-map {
+    display: none;
+}
+
+/* ---------- Toggle button ---------- */
+.home-map-toggle {
+    display: none;
+}
+
+/* Hint area shown when map is hidden on tablet/desktop */
+.home-map--hint {
+    display: none;
+}
+
+.home-map-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    padding: 24px;
+}
+
+.home-map-hint-icon {
+    font-size: 32px;
+    margin-bottom: 4px;
+}
+
+.home-map-hint-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: #6b7280;
+    margin: 0;
+}
+
+.home-map-hint-sub {
+    font-size: 13px;
+    color: #9ca3af;
+    margin: 0;
+    max-width: 220px;
+    line-height: 1.5;
+}
+
+/* ---------- Tablet 640px+ ---------- */
+@media (min-width: 640px) {
+
+    /* Sidebar goes back to fixed width on tablet and desktop */
+    .home-list {
+        width: auto;
+    }
+
+    /* Map panel shows when toggled */
+    .home-map--visible {
+        display: flex;
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+        align-items: center;
+        justify-content: center;
+        background: #f3f4f6;
+    }
+
+    /* Toggle button */
+    .home-map-toggle {
+        display: flex;
+        align-items: center;
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 50;
+        background: #1A2B3C;
+        color: white;
+        border: none;
+        border-radius: 999px;
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transition: background 0.15s ease, transform 0.1s ease;
+        white-space: nowrap;
+        gap: 8px;
+    }
+
+    .home-map-toggle:hover {
+        background: #2e4057;
+        transform: translateY(-1px);
+    }
+
+    /* Show hint area on tablet and desktop */
+    .home-map--hint {
+        display: flex;
+        flex: 1;
+        min-height: 0;
+        align-items: center;
+        justify-content: center;
+        background: #f3f4f6;
+    }
+}

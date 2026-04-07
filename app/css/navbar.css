@@ -180,6 +180,7 @@
     font-synthesis: none;
     color: white;
     line-height: 1;
+    -webkit-user-select: none;
     user-select: none;
 }
 
