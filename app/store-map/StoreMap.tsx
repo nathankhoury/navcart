@@ -5,6 +5,10 @@ import Inventory from "../DATA/data_final";
 import { marketBasketSections } from "./marketBasketData";
 import { GroceryItem, StoreSection, RoutePoint } from "./types";
 
+type StoreMapProps = {
+    embedded?: boolean;
+};
+
 function getCenter(section: StoreSection): RoutePoint {
     return {
         x: section.x + section.width / 2,
@@ -28,8 +32,7 @@ function getSectionPriority(section: StoreSection): number {
     if (section.code === "DELI") return 3;
 
     const aisleNum = getAisleNumber(section.code);
-    if (aisleNum !== null) return 100 - aisleNum; 
-    // higher aisle numbers first: A21 before A1
+    if (aisleNum !== null) return 100 - aisleNum;
 
     if (section.code === "MEAT") return 200;
     if (section.code === "DAIRY") return 201;
@@ -37,8 +40,9 @@ function getSectionPriority(section: StoreSection): number {
     return 999;
 }
 
-export default function StoreMap() {
+export default function StoreMap({ embedded = false }: StoreMapProps) {
     const [selectedItems, setSelectedItems] = useState<GroceryItem[]>([]);
+    const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
     const [routeGenerated, setRouteGenerated] = useState(false);
 
     useEffect(() => {
@@ -74,9 +78,40 @@ export default function StoreMap() {
         };
     }, []);
 
+    useEffect(() => {
+        const loadCheckedItems = () => {
+            try {
+                const saved = localStorage.getItem("navcart-checked-items");
+                if (!saved) {
+                    setCheckedIds(new Set());
+                    return;
+                }
+
+                const parsed: number[] = JSON.parse(saved);
+                setCheckedIds(new Set(parsed));
+            } catch {
+                setCheckedIds(new Set());
+            }
+        };
+
+        loadCheckedItems();
+
+        window.addEventListener("storage", loadCheckedItems);
+        window.addEventListener("navcart-checked-updated", loadCheckedItems);
+
+        return () => {
+            window.removeEventListener("storage", loadCheckedItems);
+            window.removeEventListener("navcart-checked-updated", loadCheckedItems);
+        };
+    }, []);
+
+    const routeItems = useMemo(() => {
+        return selectedItems.filter((item) => !checkedIds.has(item.id));
+    }, [selectedItems, checkedIds]);
+
     const highlightedCodes = useMemo(() => {
-        return new Set(selectedItems.map((item) => item.code).filter(Boolean));
-    }, [selectedItems]);
+        return new Set(routeItems.map((item) => item.code).filter(Boolean));
+    }, [routeItems]);
 
     const highlightedSections = useMemo(() => {
         return marketBasketSections.filter((section) =>
@@ -88,8 +123,12 @@ export default function StoreMap() {
         if (!routeGenerated) return [];
 
         const checkout = marketBasketSections.find((section) => section.code === "REG");
-        const southEntrance = marketBasketSections.find((section) => section.code === "ENT_S");
-        const eastEntrance = marketBasketSections.find((section) => section.code === "ENT_E");
+        const southEntrance = marketBasketSections.find(
+            (section) => section.code === "ENT_S"
+        );
+        const eastEntrance = marketBasketSections.find(
+            (section) => section.code === "ENT_E"
+        );
 
         const sectionsWithoutSpecialNodes = highlightedSections.filter(
             (section) => !["REG", "ENT_S", "ENT_E"].includes(section.code)
@@ -117,14 +156,16 @@ export default function StoreMap() {
             chosenEntrance = eastEntrance;
         }
 
-        return [chosenEntrance, ...sortedSections, checkout].filter(Boolean) as StoreSection[];
+        return [chosenEntrance, ...sortedSections, checkout].filter(
+            Boolean
+        ) as StoreSection[];
     }, [highlightedSections, routeGenerated]);
 
     const routePoints = useMemo((): RoutePoint[] => {
         if (routeSections.length === 0) return [];
 
-        const bottomLaneY = 530;
-        const topLaneY = 120;
+        const bottomLaneY = embedded ? 430 : 530;
+        const topLaneY = embedded ? 95 : 120;
 
         const points: RoutePoint[] = [];
         const start = getCenter(routeSections[0]);
@@ -137,8 +178,9 @@ export default function StoreMap() {
             const currentCenter = getCenter(current);
             const nextCenter = getCenter(next);
 
-            const nextIsTopDepartment =
-                ["BAKE", "DELI", "MEAT", "DAIRY"].includes(next.code);
+            const nextIsTopDepartment = ["BAKE", "DELI", "MEAT", "DAIRY"].includes(
+                next.code
+            );
 
             const laneY = nextIsTopDepartment ? topLaneY : bottomLaneY;
 
@@ -168,19 +210,26 @@ export default function StoreMap() {
         }
 
         return points;
-    }, [routeSections]);
+    }, [routeSections, embedded]);
 
-    const polylinePoints = routePoints.map((point) => `${point.x},${point.y}`).join(" ");
+    const polylinePoints = routePoints
+        .map((point) => `${point.x},${point.y}`)
+        .join(" ");
+
+    const mapWidth = embedded ? 880 : 1100;
+    const mapHeight = embedded ? 520 : 650;
 
     return (
         <section className="w-full">
             <div className="mb-4 rounded border bg-white px-4 py-3 text-sm text-gray-700">
                 {selectedItems.length === 0 ? (
                     <p>No items currently selected. Go to Manage List to add items.</p>
+                ) : routeItems.length === 0 ? (
+                    <p>All items on your current list have been checked off.</p>
                 ) : (
                     <p>
-                        Highlighting {selectedItems.length} selected item
-                        {selectedItems.length === 1 ? "" : "s"} from your current list.
+                        {routeItems.length} remaining item
+                        {routeItems.length === 1 ? "" : "s"} available for routing.
                     </p>
                 )}
             </div>
@@ -202,15 +251,15 @@ export default function StoreMap() {
                 </button>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className={embedded ? "overflow-auto" : "overflow-x-auto"}>
                 <div
                     className="relative mx-auto rounded-lg border-2 border-gray-400 bg-gray-50"
-                    style={{ width: "1100px", height: "650px" }}
+                    style={{ width: `${mapWidth}px`, height: `${mapHeight}px` }}
                 >
                     <svg
                         className="absolute left-0 top-0 pointer-events-none"
-                        width="1100"
-                        height="650"
+                        width={mapWidth}
+                        height={mapHeight}
                     >
                         {routePoints.length >= 2 && (
                             <polyline
@@ -279,7 +328,7 @@ export default function StoreMap() {
                     })}
 
                     <div className="absolute bottom-4 left-4 rounded border bg-white px-3 py-2 text-xs text-gray-600">
-                        Blue outline = section matched to items in your current list
+                        Blue outline = remaining unchecked items
                     </div>
 
                     <div className="absolute bottom-4 right-4 rounded border bg-white px-3 py-2 text-xs text-gray-600">

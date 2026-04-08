@@ -109,7 +109,15 @@ export default function GroceryList() {
     const [items, setItems] = useState<GroceryItem[]>([]);
 
     // Tracks which item IDs have been checked off by the user
-    const [checked, setChecked] = useState<Set<number>>(new Set());
+    const [checked, setChecked] = useState<Set<number>>(() => {
+        if (typeof window === "undefined") return new Set();
+        try {
+            const saved = localStorage.getItem("navcart-checked-items");
+            return saved ? new Set(JSON.parse(saved)) : new Set();
+        } catch {
+            return new Set();
+        }
+    });
 
     // Tracks which category names are collapsed (hidden)
     const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
@@ -158,6 +166,11 @@ export default function GroceryList() {
             console.error("Failed to load grocery list");
         }
     }, []);
+
+    useEffect(() => {
+        localStorage.setItem("navcart-checked-items", JSON.stringify(Array.from(checked)));
+        window.dispatchEvent(new Event("navcart-checked-updated"));
+    }, [checked]);
 
     return (
         <aside className="gl-sidebar">

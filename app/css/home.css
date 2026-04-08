@@ -83,10 +83,11 @@
         display: flex;
         flex: 1;
         min-height: 0;
-        overflow: hidden;
-        align-items: center;
+        overflow: auto;
+        align-items: flex-start;
         justify-content: center;
         background: #f3f4f6;
+        padding: 16px;
     }
 
     /* Toggle button */
