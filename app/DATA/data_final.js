@@ -171,7 +171,7 @@ Inventory["vinegar"] =	    			{"id": 152, "name": "Vinegar", "location": "", "co
 Inventory["waffles"] =		    		{"id": 153, "name": "Waffles", "location": "", "code": "", "category": "Frozen", "isCold": true};
 Inventory["whipped/sour cream"] =		{"id": 154, "name": "Whipped/Sour Cream", "location": "", "code": "", "category": "Dairy", "isCold": true};
 Inventory["white bread"] =				{"id": 155, "name": "White Bread", "location": "", "code": "", "category": "Bakery", "isCold": false};
-Inventory["whole milk"] =				{"id": 156, "name": "Whole Milk", "location": "", "code": "", "category": "Dairy", "isCold": true};
+Inventory["whole milk"] =				{"id": 156, "name": "Whole Milk", "location": "Aisle 1", "code": "A1", "category": "Dairy", "isCold": true};
 Inventory["yogurt"] =			    	{"id": 157, "name": "Yogurt", "location": "", "code": "", "category": "Dairy", "isCold": true};
 Inventory["zwieback"] =				    {"id": 158, "name": "Zwieback", "location": "", "code": "", "category": "Bakery", "isCold": false};
 export default Inventory;
