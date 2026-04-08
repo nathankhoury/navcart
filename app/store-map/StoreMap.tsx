@@ -1,10 +1,25 @@
 "use client";
 
+/*
+StoreMap.tsx
+
+This component:
+1. Loads the current grocery list from localStorage
+2. Loads checked-off item IDs from localStorage
+3. Filters out already checked items so route generation only uses remaining items
+4. Matches remaining items to store sections using section/item codes
+5. Generates a store route from the nearest entrance to checkout
+*/
+
 import { useEffect, useMemo, useState } from "react";
 import Inventory from "../DATA/data_final";
 import { marketBasketSections } from "./marketBasketData";
 import { GroceryItem, StoreSection, RoutePoint } from "./types";
 
+/*
+Returns the visual center point of a store section.
+Used for route markers and SVG line drawing.
+*/
 function getCenter(section: StoreSection): RoutePoint {
     return {
         x: section.x + section.width / 2,
@@ -12,10 +27,18 @@ function getCenter(section: StoreSection): RoutePoint {
     };
 }
 
+/*
+Basic distance formula between two points.
+Used to decide which entrance is closest to the first route stop.
+*/
 function distance(a: RoutePoint, b: RoutePoint) {
     return Math.hypot(a.x - b.x, a.y - b.y);
 }
 
+/*
+If a section code looks like A1, A15, A21, etc.,
+extract the aisle number as a number.
+*/
 function getAisleNumber(code: string): number | null {
     if (!code.startsWith("A")) return null;
     const num = Number(code.slice(1));
@@ -212,8 +235,8 @@ export default function StoreMap() {
         .map((point) => `${point.x},${point.y}`)
         .join(" ");
 
-    const mapWidth = 1100;
-    const mapHeight = 650;
+    const currentStop = routeSections.length > 1 ? routeSections[1] : null;
+    const nextStop = routeSections.length > 2 ? routeSections[2] : null;
 
     return (
         <section className="w-full">
@@ -247,16 +270,16 @@ export default function StoreMap() {
                 </button>
             </div>
 
-            <div className= "overflow-x-auto">
+            <div className="overflow-x-auto">
                 <div
                     className="relative mx-auto rounded-lg border-2 border-gray-400 bg-gray-50"
-                    style={{ width: `${mapWidth}px`, height: `${mapHeight}px` }}
+                    style={{ width: "1100px", height: "650px" }}
                 >
                     <svg
                         className="absolute left-0 top-0 pointer-events-none"
-                        width={mapWidth}
-                        height={mapHeight}
-                    >
+                        width="1100"
+                        height="650"
+                    >   
                         {routePoints.length >= 2 && (
                             <polyline
                                 points={polylinePoints}
@@ -271,21 +294,26 @@ export default function StoreMap() {
 
                         {routeSections.map((section, index) => {
                             const point = getCenter(section);
+                            const isCurrentStep = index === 1;
+                            const circleFill = isCurrentStep ? "#16a34a" : "#2563eb";
+                            const circleStroke = "#ffffff";
 
                             return (
                                 <g key={section.id}>
                                     <circle
                                         cx={point.x}
                                         cy={point.y}
-                                        r="7"
-                                        fill="#2563eb"
+                                        r="14"
+                                        fill={circleFill}
+                                        stroke={circleStroke}
+                                        strokeWidth="3"
                                     />
                                     <text
                                         x={point.x}
-                                        y={point.y - 12}
+                                        y={point.y + 4}
                                         textAnchor="middle"
-                                        fontSize="11"
-                                        fill="#1d4ed8"
+                                        fontSize="12"
+                                        fill="#ffffff"
                                         fontWeight="bold"
                                     >
                                         {index + 1}
@@ -297,22 +325,50 @@ export default function StoreMap() {
 
                     {marketBasketSections.map((section: StoreSection) => {
                         const isHighlighted = highlightedCodes.has(section.code);
+                        const isCurrentStop =
+                            routeGenerated &&
+                            currentStop &&
+                            section.code === currentStop.code;
+                        const isUpcomingStop =
+                            routeGenerated &&
+                            nextStop &&
+                            section.code === nextStop.code;
+
+                        let borderColor = "#374151";
+                        let borderWidth = "1px";
+                        let boxShadow = "none";
+
+                        if (isHighlighted) {
+                            borderColor = "#2563eb";
+                            borderWidth = "3px";
+                            boxShadow = "0 0 0 4px rgba(37, 99, 235, 0.15)";
+                        }
+
+                        if (isUpcomingStop) {
+                            borderColor = "#2563eb";
+                            borderWidth = "4px";
+                            boxShadow = "0 0 0 5px rgba(37, 99, 235, 0.18)";
+                        }
+
+                        if (isCurrentStop) {
+                            borderColor = "#16a34a";
+                            borderWidth = "4px";
+                            boxShadow = "0 0 0 6px rgba(22, 163, 74, 0.18)";
+                        }
 
                         return (
                             <div
                                 key={section.id}
-                                className="absolute flex flex-col items-center justify-center rounded-md border text-center text-sm font-medium shadow-sm"
+                                className="absolute flex flex-col items-center justify-center rounded-md border text-center text-sm font-medium shadow-sm transition-all"
                                 style={{
                                     left: `${section.x}px`,
                                     top: `${section.y}px`,
                                     width: `${section.width}px`,
                                     height: `${section.height}px`,
                                     backgroundColor: section.color,
-                                    borderColor: isHighlighted ? "#2563eb" : "#374151",
-                                    borderWidth: isHighlighted ? "3px" : "1px",
-                                    boxShadow: isHighlighted
-                                        ? "0 0 0 4px rgba(37, 99, 235, 0.15)"
-                                        : "none",
+                                    borderColor,
+                                    borderWidth,
+                                    boxShadow,
                                 }}
                             >
                                 <span className="text-[10px]">{section.label}</span>
@@ -328,7 +384,7 @@ export default function StoreMap() {
                     </div>
 
                     <div className="absolute bottom-4 right-4 rounded border bg-white px-3 py-2 text-xs text-gray-600">
-                        Route starts at nearest entrance and ends at checkout
+                        Green = current stop, blue = upcoming route
                     </div>
                 </div>
             </div>
