@@ -22,7 +22,7 @@ export default function Home() {
         {/* Map panel - tablet and desktop only */}
         <div className={`home-map${showMap ? " home-map--visible" : " home-map--hint"}`}>
           {showMap ? (
-            <StoreMap embedded />
+            <StoreMap />
           ) : (
             <div className="home-map-hint">
               <span className="home-map-hint-icon">🗺️</span>

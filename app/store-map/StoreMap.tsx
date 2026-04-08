@@ -5,10 +5,6 @@ import Inventory from "../DATA/data_final";
 import { marketBasketSections } from "./marketBasketData";
 import { GroceryItem, StoreSection, RoutePoint } from "./types";
 
-type StoreMapProps = {
-    embedded?: boolean;
-};
-
 function getCenter(section: StoreSection): RoutePoint {
     return {
         x: section.x + section.width / 2,
@@ -40,7 +36,7 @@ function getSectionPriority(section: StoreSection): number {
     return 999;
 }
 
-export default function StoreMap({ embedded = false }: StoreMapProps) {
+export default function StoreMap() {
     const [selectedItems, setSelectedItems] = useState<GroceryItem[]>([]);
     const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
     const [routeGenerated, setRouteGenerated] = useState(false);
@@ -164,8 +160,8 @@ export default function StoreMap({ embedded = false }: StoreMapProps) {
     const routePoints = useMemo((): RoutePoint[] => {
         if (routeSections.length === 0) return [];
 
-        const bottomLaneY = embedded ? 430 : 530;
-        const topLaneY = embedded ? 95 : 120;
+        const bottomLaneY = 530;
+        const topLaneY = 120;
 
         const points: RoutePoint[] = [];
         const start = getCenter(routeSections[0]);
@@ -210,14 +206,14 @@ export default function StoreMap({ embedded = false }: StoreMapProps) {
         }
 
         return points;
-    }, [routeSections, embedded]);
+    }, [routeSections]);
 
     const polylinePoints = routePoints
         .map((point) => `${point.x},${point.y}`)
         .join(" ");
 
-    const mapWidth = embedded ? 880 : 1100;
-    const mapHeight = embedded ? 520 : 650;
+    const mapWidth = 1100;
+    const mapHeight = 650;
 
     return (
         <section className="w-full">
@@ -251,7 +247,7 @@ export default function StoreMap({ embedded = false }: StoreMapProps) {
                 </button>
             </div>
 
-            <div className={embedded ? "overflow-auto" : "overflow-x-auto"}>
+            <div className= "overflow-x-auto">
                 <div
                     className="relative mx-auto rounded-lg border-2 border-gray-400 bg-gray-50"
                     style={{ width: `${mapWidth}px`, height: `${mapHeight}px` }}
