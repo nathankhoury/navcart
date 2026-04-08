@@ -1,99 +1,130 @@
 "use client";
-
 /*
-  React imports:
-  - useState: stores component state
+  React hooks:
+  - useState: stores interactive state
   - useMemo: memoizes filtered results
-  - useEffect: loads/saves data from localStorage
+  - useEffect: handles localStorage and timed toast clearing
 */
 import { useState, useMemo, useEffect } from "react";
 
-
-// Reusable top bar component for the NavCart header
-
+/*
+  Reusable top navigation bar
+*/
 import TopBar from "../topbar";
 
-
-// Main stylesheet currently being used by this page
+/*
+  Main stylesheet for the list manager page
+*/
 
 import "../css/styles.css";
 
 /*
-  Inventory dataset
-  Assumes data_final.js exports an object named Inventory
+  Inventory dataset.
+  This assumes your data file uses a default export.
+  Update the path only if your DATA folder is somewhere else.
 */
 import Inventory from "../DATA/data_final.js";
 
 /*
-  Type for saved lists:
-  key = saved list name
-  value = object holding the saved items and an optional description
+  Structure for saved named lists.
+  Each saved list stores:
+  - items: array of item keys
+  - description: optional text description
 */
 type SavedListMap = Record<string, { items: string[]; description: string }>;
 
+/*
+  Structure for the last action so the Undo button can reverse it.
+*/
+type LastAction =
+    | { type: "add"; itemKey: string }
+    | { type: "remove"; itemKey: string }
+    | { type: "clear"; previousList: string[] }
+    | null;
 
-//  Main List Manager page
-
+/*
+  Main List Manager page
+*/
 export default function ListManager() {
-    
-    //  Search text for the LEFT panel inventory search
-    
+    /*
+      Left panel search input
+    */
     const [query, setQuery] = useState("");
 
     /*
-      Current active grocery list being edited on the RIGHT side
-      Stores item keys that correspond to Inventory[key]
+      Current active grocery list shown on the right side.
+      Stores keys that match Inventory[key].
     */
-    const [list, setList] = useState<string[]>(() => {
-        // Initialize list from localStorage if available, otherwise start with empty list
-        // safety check:
-        if (typeof window === "undefined") return [];
-        try {
-            const saved = localStorage.getItem("navcart-current-list");
-            return saved ? JSON.parse(saved) : [];
-        } catch {
-            return [];
-        }
-    });
-    
-    //  Name used when saving a list
-    
-    const [listName, setListName] = useState("");
+    const [list, setList] = useState<string[]>([]);
 
-    
-    //  Optional description used when saving a list
-    
+    /*
+      Save-list form fields
+    */
+    const [listName, setListName] = useState("");
     const [description, setDescription] = useState("");
 
-    
-    //  Search text for the RIGHT panel "search within my list"
-    
+    /*
+      Search text for searching within the user's current list
+    */
     const [listSearch, setListSearch] = useState("");
 
     /*
-      Controls what appears on the LEFT panel:
-      - default = search items
-      - save = save list form + saved lists
-      - load = load saved lists
+      Controls what appears on the left panel:
+      - default: normal search + departments
+      - save: save-list screen
+      - load: load-list screen
     */
     const [leftMode, setLeftMode] = useState<"default" | "save" | "load">("default");
 
-    
-    //  Stores all named saved lists
-    
+    /*
+      Saved named lists
+    */
     const [savedLists, setSavedLists] = useState<SavedListMap>({});
 
     /*
       Toast / popup message shown near the bottom of the page
-      Example: "Item added", "Item removed", "List saved"
     */
     const [toastMessage, setToastMessage] = useState("");
 
-    
-    //  Loads the current active list from localStorage when the page first opens
-    
+    /*
+      Last action for Undo support
+    */
+    const [lastAction, setLastAction] = useState<LastAction>(null);
+
+    /*
+      Currently selected department/category
+    */
+    const [selectedDepartment, setSelectedDepartment] = useState("");
+
+    /*
+      Convert the Inventory object into an array of entries once.
+      Each entry is [key, item].
+    */
+    const inventoryEntries = useMemo(() => {
+        return Object.entries(Inventory) as [string, any][];
+    }, []);
+
+    /*
+      Build department buttons dynamically from the dataset.
+      This prevents hardcoding categories inside page.tsx.
+      If the dataset changes, the buttons update automatically.
+    */
+    const departments = useMemo(() => {
+        const uniqueCategories = new Set<string>();
+
+        inventoryEntries.forEach(([key, item]) => {
+            if (item.category && String(item.category).trim()) {
+                uniqueCategories.add(String(item.category).trim());
+            }
+        });
+
+        return Array.from(uniqueCategories).sort((a, b) => a.localeCompare(b));
+    }, [inventoryEntries]);
+
+    /*
+      Load current active list from localStorage when page first opens
+    */
     useEffect(() => {
-        console.log("DEBUG - Loading current list from localStorage...");
         const saved = localStorage.getItem("navcart-current-list");
 
         if (saved) {
@@ -107,17 +138,15 @@ export default function ListManager() {
     }, []);
 
     /*
-      Saves the current active list to localStorage every time it changes
-      This keeps the current list persistent across refresh/navigation
+      Save current active list whenever it changes
     */
     useEffect(() => {
         localStorage.setItem("navcart-current-list", JSON.stringify(list));
-        window.dispatchEvent(new Event("navcart-list-updated"));
     }, [list]);
 
-    
-    //  Loads saved named lists from localStorage on page load
-    
+    /*
+      Load named saved lists from localStorage on page load
+    */
     useEffect(() => {
         const storedLists = localStorage.getItem("navcart-saved-lists");
 
@@ -132,8 +161,7 @@ export default function ListManager() {
     }, []);
 
     /*
-      Automatically clears the toast message after a short delay
-      This creates the popup/toast behavior
+      Automatically hide the toast message after a short time
     */
     useEffect(() => {
         if (!toastMessage) return;
@@ -146,27 +174,24 @@ export default function ListManager() {
     }, [toastMessage]);
 
     /*
-      Filters the full inventory for the LEFT-side search bar
-      Matches:
-      - item name
-      - item category
-      - item location
+      Left-side search results from typed search.
+      Matches item name, category, or location.
     */
     const results = useMemo(() => {
         const q = query.trim().toLowerCase();
 
         if (!q) return [];
 
-        return Object.entries(Inventory).filter(([key, item]: [string, any]) =>
-            item.name.toLowerCase().includes(q) ||
-            (item.category && item.category.toLowerCase().includes(q)) ||
-            (item.location && item.location.toLowerCase().includes(q))
+        return inventoryEntries.filter(([key, item]) =>
+            String(item.name).toLowerCase().includes(q) ||
+            String(item.category || "").toLowerCase().includes(q) ||
+            String(item.location || "").toLowerCase().includes(q)
         );
-    }, [query]);
+    }, [query, inventoryEntries]);
 
     /*
-      Filters only the items currently in the user's active list
-      Used by the RIGHT-side search bar
+      Right-side search within the current active list.
+      Filters only items already added by the user.
     */
     const filteredList = useMemo(() => {
         const q = listSearch.trim().toLowerCase();
@@ -174,22 +199,40 @@ export default function ListManager() {
         if (!q) return list;
 
         return list.filter((key) => {
-            const item = Inventory[key as keyof typeof Inventory];
+            const item = (Inventory as any)[key];
+
             return (
-                item.name.toLowerCase().includes(q) ||
-                (item.category && item.category.toLowerCase().includes(q)) ||
-                (item.location && item.location.toLowerCase().includes(q))
+                String(item.name).toLowerCase().includes(q) ||
+                String(item.category || "").toLowerCase().includes(q) ||
+                String(item.location || "").toLowerCase().includes(q)
             );
         });
     }, [listSearch, list]);
 
     /*
-      Adds an item from the LEFT-side inventory search into the current list
-      Also clears the inventory search box and shows a toast message
+      Department/category results.
+      This reads directly from the dataset instead of using hardcoded item lists.
+    */
+    const departmentResults = useMemo(() => {
+        if (!selectedDepartment) return [];
+
+        return inventoryEntries.filter(([key, item]) =>
+            String(item.category || "").trim().toLowerCase() ===
+            selectedDepartment.trim().toLowerCase()
+        );
+    }, [selectedDepartment, inventoryEntries]);
+
+    /*
+      Add an item to the current active list
+      - prevents duplicates
+      - records action for Undo
+      - clears left search input
+      - shows toast message
     */
     const addItem = (key: string) => {
         if (!list.includes(key)) {
             setList((prev) => [...prev, key]);
+            setLastAction({ type: "add", itemKey: key });
             setQuery("");
             setToastMessage("Item added to list");
         } else {
@@ -197,23 +240,22 @@ export default function ListManager() {
         }
     };
 
-    
-    //  Removes an item from the current list and shows a toast message
-    
+    /*
+      Remove an item from the current list
+      - records action for Undo
+      - shows toast message
+    */
     const removeItem = (key: string) => {
         setList((prev) => prev.filter((k) => k !== key));
+        setLastAction({ type: "remove", itemKey: key });
         setToastMessage("Item removed from list");
     };
 
     /*
-      Saves the current list under the entered name
-      If the name is blank, a default name is generated
-      Also saves optional description
+      Save the current list as a named saved list.
+      If the name is blank, generate a fallback name.
     */
     const saveList = () => {
-        
-        //  If the user leaves name blank, generate a fallback name
-        
         const generatedName = `List ${Object.keys(savedLists).length + 1}`;
         const name = listName.trim() || generatedName;
 
@@ -234,8 +276,8 @@ export default function ListManager() {
     };
 
     /*
-      Loads a saved list into the current active list
-      Then returns the left panel to default mode
+      Load a saved list into the current active list
+      and return the left panel to default mode
     */
     const loadList = (name: string) => {
         const selected = savedLists[name];
@@ -248,9 +290,9 @@ export default function ListManager() {
         }
     };
 
-    
-    //  Deletes a saved list after confirmation
-    
+    /*
+      Delete a saved list after confirmation
+    */
     const deleteSavedList = (name: string) => {
         const confirmed = window.confirm(`Are you sure you want to delete "${name}"?`);
 
@@ -265,26 +307,61 @@ export default function ListManager() {
     };
 
     /*
-      Clears the current active list after confirmation
-      Only clears the list being edited, not all saved lists
+      Clear the current active list after confirmation
+      and save the previous list so Undo can restore it
     */
     const clearCurrentList = () => {
-        if (!window.confirm("Are you sure you want to clear the list you are currently editing?")) return;
+        const confirmed = window.confirm(
+            "Are you sure you want to clear the list you are currently editing?"
+        );
 
+        if (!confirmed) return;
+
+        setLastAction({ type: "clear", previousList: [...list] });
         setList([]);
+        localStorage.removeItem("navcart-current-list");
         setToastMessage("Current list cleared");
+    };
+
+    /*
+      Undo the last supported action:
+      - undo add
+      - undo remove
+      - undo clear
+    */
+    const undoLastAction = () => {
+        if (!lastAction) return;
+
+        if (lastAction.type === "add") {
+            setList((prev) => prev.filter((k) => k !== lastAction.itemKey));
+            setToastMessage("Undo: item removed");
+        }
+
+        if (lastAction.type === "remove") {
+            setList((prev) =>
+                prev.includes(lastAction.itemKey) ? prev : [...prev, lastAction.itemKey]
+            );
+            setToastMessage("Undo: item restored");
+        }
+
+        if (lastAction.type === "clear") {
+            setList(lastAction.previousList);
+            setToastMessage("Undo: list restored");
+        }
+
+        setLastAction(null);
     };
 
     return (
         <div id="lm-page-wrapper" className="bg-white text-black">
-            {/* Top navigation bar */}
+            {/* Top navigation/header */}
             <TopBar />
 
-            {/* Main 2-column layout */}
+            {/* Main two-panel layout */}
             <div id="lm-content-wrapper">
                 {/* ========================= LEFT PANEL ========================= */}
                 <div id="left" className="list-management-panel">
-                    {/* DEFAULT MODE: search items from inventory */}
+                    {/* DEFAULT MODE: normal search + department browsing */}
                     {leftMode === "default" && (
                         <>
                             <h1 className="panel-header text-4xl font-bold text-heading">
@@ -295,6 +372,7 @@ export default function ListManager() {
                                 Click or drag to add items to your list
                             </p>
 
+                            {/* SEARCH BAR FIRST */}
                             <div id="searchWrapper">
                                 <input
                                     id="searchBox"
@@ -304,24 +382,82 @@ export default function ListManager() {
                                     placeholder="Type a grocery item to search!"
                                 />
 
+                                {/* Typed search results */}
                                 <ul id="searchResults" className="list-none pl-0">
-                                    {results.map(([key, item]: [string, any]) => (
+                                    {results.map(([key, item]) => (
                                         <li key={item.id}>
                                             <button
                                                 className="list-item-button search-result-button"
                                                 onClick={() => addItem(key)}
                                             >
                                                 <span id="itemNameDisplayed">{item.name + " "}</span>
-                                                <span id="itemLoc">{item.location || item.category}</span>
+                                                <span id="itemLoc">
+                                                    {item.location || item.category}
+                                                </span>
                                             </button>
                                         </li>
                                     ))}
                                 </ul>
                             </div>
+
+                            {/* DEPARTMENT BOXES BELOW SEARCH */}
+                            <div className="department-section">
+                                <h2 className="department-title">Browse by Department</h2>
+
+                                <div className="department-grid">
+                                    {departments.map((dept) => (
+                                        <button
+                                            key={dept}
+                                            className={`department-box ${
+                                                selectedDepartment === dept
+                                                    ? "department-box-active"
+                                                    : ""
+                                            }`}
+                                            onClick={() => setSelectedDepartment(dept)}
+                                        >
+                                            {dept}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {selectedDepartment && (
+                                    <button
+                                        className="clear-department-button"
+                                        onClick={() => setSelectedDepartment("")}
+                                    >
+                                        Clear Department Filter
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* Department-based results pulled directly from Inventory */}
+                            {selectedDepartment && (
+                                <div className="department-results-section">
+                                    <h3 className="department-results-title">
+                                        {selectedDepartment} Items
+                                    </h3>
+
+                                    <ul id="searchResults" className="list-none pl-0">
+                                        {departmentResults.map(([key, item]) => (
+                                            <li key={item.id}>
+                                                <button
+                                                    className="list-item-button search-result-button"
+                                                    onClick={() => addItem(key)}
+                                                >
+                                                    <span id="itemNameDisplayed">{item.name + " "}</span>
+                                                    <span id="itemLoc">
+                                                        {item.location || item.category}
+                                                    </span>
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
                         </>
                     )}
 
-                    {/* SAVE MODE: save form + saved lists */}
+                    {/* SAVE MODE */}
                     {leftMode === "save" && (
                         <>
                             <h1 className="panel-header text-4xl font-bold text-heading">
@@ -382,7 +518,7 @@ export default function ListManager() {
                         </>
                     )}
 
-                    {/* LOAD MODE: just show saved lists for loading */}
+                    {/* LOAD MODE */}
                     {leftMode === "load" && (
                         <>
                             <h1 className="panel-header text-4xl font-bold text-heading">
@@ -433,7 +569,7 @@ export default function ListManager() {
                         Click or drag to remove items
                     </p>
 
-                    {/* In default mode, show the list control buttons + search-in-list */}
+                    {/* In default mode, show top action buttons + search within list */}
                     {leftMode === "default" ? (
                         <>
                             <div>
@@ -460,8 +596,17 @@ export default function ListManager() {
                                 >
                                     Clear List
                                 </button>
+
+                                <button
+                                    id="undoListButton"
+                                    className="listControlButton font-bold py-2 px-4 rounded"
+                                    onClick={undoLastAction}
+                                >
+                                    Undo
+                                </button>
                             </div>
 
+                            {/* Search within the current active list */}
                             <div id="searchWrapper">
                                 <input
                                     id="searchBox"
@@ -473,7 +618,6 @@ export default function ListManager() {
                             </div>
                         </>
                     ) : (
-                        /* In save/load mode, show return button */
                         <button
                             className="return-button"
                             onClick={() => setLeftMode("default")}
@@ -482,11 +626,12 @@ export default function ListManager() {
                         </button>
                     )}
 
-                    {/* Current list display */}
+                    {/* Current active list items */}
                     <div id="listContentsWrapper">
                         <ul id="listContents" className="list-none pl-0">
                             {filteredList.map((key) => {
-                                const item = Inventory[key as keyof typeof Inventory];
+                                const item = (Inventory as any)[key];
+
                                 return (
                                     <li key={item.id}>
                                         <button
@@ -504,12 +649,8 @@ export default function ListManager() {
                 </div>
             </div>
 
-            {/* Toast / popup message */}
-            {toastMessage && (
-                <div className="toast-message">
-                    {toastMessage}
-                </div>
-            )}
+            {/* Toast popup message */}
+            {toastMessage && <div className="toast-message">{toastMessage}</div>}
         </div>
     );
 }
