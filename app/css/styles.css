@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 /* =========================================================
-   GENERAL PANEL / PAGE LAYOUT
+   GENERAL LAYOUT / PANELS
    ========================================================= */
 
-/* Base panel styling for both left and right sections */
+/* Shared layout for both left and right panels */
 .list-management-panel {
     margin-left: auto;
     margin-right: auto;
@@ -14,14 +14,14 @@
     padding: 20px 28px;
 }
 
-/* Main section headings */
+/* Main panel heading */
 .panel-header {
     margin-top: 24px;
     margin-bottom: 22px;
     color: #1A2B3C;
 }
 
-/* Top control buttons (Save, Load, Clear) */
+/* Shared styling for top action buttons */
 .listControlButton {
     background-color: #ccc;
     color: black;
@@ -31,7 +31,7 @@
     min-width: 118px;
 }
 
-/* Shared card/button style for search results and current list items */
+/* Shared card/button style used for inventory items and list items */
 .list-item-button {
     background: white;
     color: black;
@@ -41,12 +41,12 @@
     text-align: left;
 }
 
-/* Hover state for search result item buttons */
+/* Hover style for items shown as search results */
 .search-result-button:hover {
     background: #e9f6ea;
 }
 
-/* Hover state for items already in the current list */
+/* Hover style for items already inside the current list */
 .current-list-button:hover {
     background: #f7d7d7;
 }
@@ -55,7 +55,7 @@
    TOP BAR
    ========================================================= */
 
-/* Header/topbar wrapper */
+/* Top navigation bar wrapper */
 #topbar-wrapper {
     width: 100%;
     height: auto;
@@ -72,33 +72,33 @@
 }
 
 /* =========================================================
-   TWO-COLUMN CONTENT LAYOUT
+   MAIN TWO-COLUMN LAYOUT
    ========================================================= */
 
-/* Main content wrapper */
+/* Main wrapper for left and right panels */
 #lm-content-wrapper {
     display: flex;
     min-height: 100vh;
 }
 
-/* Left side takes half width with dividing border */
+/* Left panel width + divider */
 #left {
     display: inline-block;
     width: 50vw;
     border-right: #7d8ca1 solid 2px;
 }
 
-/* Right side takes half width */
+/* Right panel width */
 #right {
     display: inline-block;
     width: 50vw;
 }
 
 /* =========================================================
-   CONTROL BUTTON COLORS
+   TOP BUTTON COLORS
    ========================================================= */
 
-/* Save button colors */
+/* Save button */
 #saveListButton {
     background-color: #8be88e;
     color: black;
@@ -112,7 +112,7 @@
     background-color: #477249;
 }
 
-/* Load button colors */
+/* Load button */
 #loadListButton {
     background-color: #97c1f1;
     color: black;
@@ -126,7 +126,7 @@
     background-color: #3b4e7a;
 }
 
-/* Clear button colors */
+/* Clear button */
 #clearListButton {
     background-color: #e18b8b;
     color: black;
@@ -140,11 +140,25 @@
     background-color: #7a4747;
 }
 
+/* Undo button */
+#undoListButton {
+    background-color: #f2d78c;
+    color: black;
+}
+
+#undoListButton:hover {
+    background-color: #dfc06b;
+}
+
+#undoListButton:active {
+    background-color: #b7984f;
+}
+
 /* =========================================================
-   SEARCH / LIST WRAPPERS
+   SEARCH + LIST AREAS
    ========================================================= */
 
-/* Wrapper around left-side search and right-side list search */
+/* Wrapper around search bars and list contents */
 #searchWrapper,
 #listContentsWrapper {
     width: 80%;
@@ -152,7 +166,7 @@
     margin-right: auto;
 }
 
-/* Search box styling */
+/* Shared search bar styling */
 #searchBox {
     width: 100%;
     border: 1px solid #d0d0d0;
@@ -166,12 +180,12 @@
     color: #333;
 }
 
-/* Placeholder styling */
+/* Search placeholder */
 #searchBox::placeholder {
     color: #b0b0b0;
 }
 
-/* Search results and list content scroll areas */
+/* Scrollable results areas */
 #searchResults,
 #listContents {
     max-height: 62vh;
@@ -180,18 +194,18 @@
     background: #f7f7f7;
 }
 
-/* Round only the search results box */
+/* Search results area gets rounded bottom corners */
 #searchResults {
     border-radius: 0 0 14px 14px;
 }
 
-/* Keep the current list area visually open */
+/* Current list area stays more open visually */
 #listContents {
     border: none;
     background: transparent;
 }
 
-/* Spacing for each item row inside search results/current list */
+/* Item spacing inside results/list wrappers */
 #searchResults > *,
 #listContents > * {
     text-align: left;
@@ -204,17 +218,91 @@
     font-weight: bold;
 }
 
-/* Lighter secondary metadata (aisle/category) */
+/* Secondary metadata text */
 #itemLoc {
     font-weight: lighter;
     color: #444;
 }
 
 /* =========================================================
-   SAVE / LOAD MODE PANEL STYLES
+   DEPARTMENT BROWSING
    ========================================================= */
 
-/* Card that contains the save form */
+/* Wrapper for browse-by-department section */
+.department-section {
+    width: 80%;
+    margin: 20px auto 10px auto;
+    text-align: left;
+}
+
+/* Department section heading */
+.department-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #1A2B3C;
+    margin-bottom: 12px;
+}
+
+/* Grid of department boxes */
+.department-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+    gap: 12px;
+}
+
+/* Department button styling */
+.department-box {
+    background-color: #71c66b;
+    color: black;
+    border: 1px solid #4f9b4a;
+    border-radius: 14px;
+    padding: 18px 12px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+}
+
+/* Department hover state */
+.department-box:hover {
+    background-color: #5eb458;
+}
+
+/* Department selected state */
+.department-box-active {
+    background-color: #4b9c45;
+    color: white;
+}
+
+/* Department results section */
+.department-results-section {
+    width: 80%;
+    margin: 18px auto 0 auto;
+}
+
+/* Department results heading */
+.department-results-title {
+    text-align: left;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #1A2B3C;
+    margin-bottom: 10px;
+}
+
+/* Clear department filter button */
+.clear-department-button {
+    margin-top: 12px;
+    background: #d9d9d9;
+    border: 1px solid #888;
+    border-radius: 999px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+/* =========================================================
+   SAVE / LOAD MODE PANELS
+   ========================================================= */
+
+/* Save form container card */
 .save-panel-card {
     width: 320px;
     margin: 0 auto 30px auto;
@@ -225,7 +313,7 @@
     text-align: left;
 }
 
-/* Labels for save form inputs */
+/* Save form labels */
 .save-label {
     display: block;
     font-size: 1rem;
@@ -233,7 +321,7 @@
     color: #333;
 }
 
-/* Shared input styling for save form fields */
+/* Save form fields */
 .save-input,
 .save-textarea {
     width: 100%;
@@ -244,13 +332,13 @@
     background: white;
 }
 
-/* Placeholder styling for save form */
+/* Save form placeholder color */
 .save-input::placeholder,
 .save-textarea::placeholder {
     color: #b8b8b8;
 }
 
-/* Description textarea */
+/* Description field */
 .save-textarea {
     resize: none;
     min-height: 90px;
@@ -281,7 +369,7 @@
     color: #1A2B3C;
 }
 
-/* Stack saved list cards vertically */
+/* Stack saved lists vertically */
 .saved-lists-stack {
     width: 360px;
     margin: 0 auto;
@@ -290,7 +378,7 @@
     gap: 18px;
 }
 
-/* Row containing saved-list button and delete button */
+/* Row for saved list card + delete button */
 .saved-list-card {
     display: flex;
     align-items: center;
@@ -313,13 +401,13 @@
     background: #f4f8ff;
 }
 
-/* Saved list name text */
+/* Saved list name */
 .saved-list-name {
     font-weight: bold;
     font-size: 1.05rem;
 }
 
-/* Saved list description text */
+/* Saved list description */
 .saved-list-desc {
     font-size: 0.95rem;
     color: #333;
@@ -339,7 +427,7 @@
     background: #efc7c7;
 }
 
-/* Fallback text when there are no saved lists */
+/* Empty state text for saved lists */
 .empty-saved-text {
     color: #666;
 }
@@ -364,7 +452,7 @@
    TOAST / POPUP MESSAGE
    ========================================================= */
 
-/* Small fixed popup message shown at bottom-center */
+/* Toast popup shown at bottom center */
 .toast-message {
     position: fixed;
     bottom: 24px;
