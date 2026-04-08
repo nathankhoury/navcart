@@ -112,6 +112,7 @@ export default function ListManager() {
     */
     useEffect(() => {
         localStorage.setItem("navcart-current-list", JSON.stringify(list));
+        window.dispatchEvent(new Event("navcart-list-updated"));
     }, [list]);
 
     
