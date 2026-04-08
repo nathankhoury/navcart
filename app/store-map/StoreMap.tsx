@@ -16,17 +16,30 @@ function distance(a: RoutePoint, b: RoutePoint) {
     return Math.hypot(a.x - b.x, a.y - b.y);
 }
 
-function buildOrthogonalSegment(a: RoutePoint, b: RoutePoint): RoutePoint[] {
-    // horizontal first, then vertical
-    return [
-        a,
-        { x: b.x, y: a.y },
-        b,
-    ];
+function getAisleNumber(code: string): number | null {
+    if (!code.startsWith("A")) return null;
+    const num = Number(code.slice(1));
+    return Number.isNaN(num) ? null : num;
+}
+
+function getSectionPriority(section: StoreSection): number {
+    if (section.code === "PROD") return 1;
+    if (section.code === "BAKE") return 2;
+    if (section.code === "DELI") return 3;
+
+    const aisleNum = getAisleNumber(section.code);
+    if (aisleNum !== null) return 100 - aisleNum; 
+    // higher aisle numbers first: A21 before A1
+
+    if (section.code === "MEAT") return 200;
+    if (section.code === "DAIRY") return 201;
+
+    return 999;
 }
 
 export default function StoreMap() {
     const [selectedItems, setSelectedItems] = useState<GroceryItem[]>([]);
+    const [routeGenerated, setRouteGenerated] = useState(false);
 
     useEffect(() => {
         const loadCurrentList = () => {
@@ -72,6 +85,8 @@ export default function StoreMap() {
     }, [highlightedCodes]);
 
     const routeSections = useMemo(() => {
+        if (!routeGenerated) return [];
+
         const checkout = marketBasketSections.find((section) => section.code === "REG");
         const southEntrance = marketBasketSections.find((section) => section.code === "ENT_S");
         const eastEntrance = marketBasketSections.find((section) => section.code === "ENT_E");
@@ -80,7 +95,11 @@ export default function StoreMap() {
             (section) => !["REG", "ENT_S", "ENT_E"].includes(section.code)
         );
 
-        const sortedSections = [...sectionsWithoutSpecialNodes].sort((a, b) => a.x - b.x);
+        const sortedSections = [...sectionsWithoutSpecialNodes].sort((a, b) => {
+            const priorityDiff = getSectionPriority(a) - getSectionPriority(b);
+            if (priorityDiff !== 0) return priorityDiff;
+            return a.x - b.x;
+        });
 
         if (sortedSections.length === 0) {
             return [];
@@ -99,7 +118,7 @@ export default function StoreMap() {
         }
 
         return [chosenEntrance, ...sortedSections, checkout].filter(Boolean) as StoreSection[];
-    }, [highlightedSections]);
+    }, [highlightedSections, routeGenerated]);
 
     const routePoints = useMemo((): RoutePoint[] => {
         if (routeSections.length === 0) return [];
@@ -108,7 +127,6 @@ export default function StoreMap() {
         const topLaneY = 120;
 
         const points: RoutePoint[] = [];
-
         const start = getCenter(routeSections[0]);
         points.push(start);
 
@@ -127,7 +145,6 @@ export default function StoreMap() {
             const currentLanePoint = { x: currentCenter.x, y: laneY };
             const nextLanePoint = { x: nextCenter.x, y: laneY };
 
-            // move from current stop to the lane
             if (
                 points[points.length - 1].x !== currentLanePoint.x ||
                 points[points.length - 1].y !== currentLanePoint.y
@@ -135,7 +152,6 @@ export default function StoreMap() {
                 points.push(currentLanePoint);
             }
 
-            // move horizontally along the lane
             if (
                 points[points.length - 1].x !== nextLanePoint.x ||
                 points[points.length - 1].y !== nextLanePoint.y
@@ -143,7 +159,6 @@ export default function StoreMap() {
                 points.push(nextLanePoint);
             }
 
-            // move vertically into the next stop
             if (
                 points[points.length - 1].x !== nextCenter.x ||
                 points[points.length - 1].y !== nextCenter.y
@@ -168,6 +183,23 @@ export default function StoreMap() {
                         {selectedItems.length === 1 ? "" : "s"} from your current list.
                     </p>
                 )}
+            </div>
+
+            <div className="mb-4 flex gap-3">
+                <button
+                    className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+                    onClick={() => setRouteGenerated(true)}
+                    disabled={highlightedSections.length === 0}
+                >
+                    Generate Route
+                </button>
+
+                <button
+                    className="rounded border border-gray-400 bg-white px-4 py-2 text-black hover:bg-gray-100"
+                    onClick={() => setRouteGenerated(false)}
+                >
+                    Clear Route
+                </button>
             </div>
 
             <div className="overflow-x-auto">
@@ -251,7 +283,7 @@ export default function StoreMap() {
                     </div>
 
                     <div className="absolute bottom-4 right-4 rounded border bg-white px-3 py-2 text-xs text-gray-600">
-                        Dashed blue line = sample walking route from nearest entrance to checkout
+                        Route starts at nearest entrance and ends at checkout
                     </div>
                 </div>
             </div>
