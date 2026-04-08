@@ -29,3 +29,8 @@ export type GroceryItem = {
     category: string;
     isCold: boolean;
 };
+
+export type RoutePoint = {
+    x: number;
+    y: number;
+};
