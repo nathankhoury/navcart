@@ -2,128 +2,195 @@
 .home-wrapper {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
     background: #ffffff;
     color: #111827;
 }
 
-/* ---------- Main content area ---------- */
-.home-main {
-    display: flex;
+
+/* ---------- Hero section ---------- */
+.home-hero {
     flex: 1;
-    min-height: 0;
-    position: relative;
-    overflow: hidden;
-}
-
-/* ---------- Grocery list ---------- */
-/* Full width on mobile */
-.home-list {
-    flex-shrink: 0;
-    height: 100%;
-    width: 100%;
-}
-
-/* ---------- Map panel ---------- */
-.home-map {
-    display: none;
-}
-
-/* ---------- Toggle button ---------- */
-.home-map-toggle {
-    display: none;
-}
-
-/* Hint area shown when map is hidden on tablet/desktop */
-.home-map--hint {
-    display: none;
-}
-
-.home-map-hint {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    padding: 60px 24px 48px;
     text-align: center;
-    padding: 24px;
 }
 
-.home-map-hint-icon {
-    font-size: 32px;
-    margin-bottom: 4px;
-}
 
-.home-map-hint-text {
-    font-size: 15px;
+.home-eyebrow {
+    font-size: 40px;
     font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #4CAF50;
+    margin: 0 0 14px;
+}
+
+
+.home-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1A2B3C;
+    margin: 0 0 12px;
+    line-height: 1.15;
+}
+
+
+.home-subtitle {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin: 0 0 48px;
+    max-width: 380px;
+    line-height: 1.65;
+}
+
+
+/* ---------- Get Started section ---------- */
+.home-get-started {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+}
+
+
+.home-get-started-heading {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1A2B3C;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+
+.home-card-row {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    max-width: 320px;
+}
+
+
+/* ---------- Action cards ---------- */
+.home-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #ffffff;
+    border: 1px solid #d0d7e0;
+    border-radius: 14px;
+    padding: 20px 22px;
+    text-align: left;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+
+.home-card:hover {
+    box-shadow: 0 4px 18px rgba(26, 43, 60, 0.12);
+    border-color: #b0bec8;
+}
+
+
+.home-card--primary {
+    border-color: #4CAF50;
+    background: #f4fbf4;
+}
+
+
+.home-card--primary:hover {
+    border-color: #3d9955;
+}
+
+
+.home-card-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+
+.home-card-icon--green {
+    background: #ddf0dd;
+}
+
+
+.home-card-icon--blue {
+    background: #ddeaf7;
+}
+
+
+.home-card-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1A2B3C;
+    margin: 0;
+}
+
+
+.home-card-desc {
+    font-size: 0.85rem;
     color: #6b7280;
     margin: 0;
-}
-
-.home-map-hint-sub {
-    font-size: 13px;
-    color: #9ca3af;
-    margin: 0;
-    max-width: 220px;
     line-height: 1.5;
 }
 
+
+.home-card-arrow {
+    font-size: 1rem;
+    color: #9ca3af;
+}
+
+
 /* ---------- Tablet 640px+ ---------- */
 @media (min-width: 640px) {
-
-    /* Sidebar goes back to fixed width on tablet and desktop */
-    .home-list {
-        width: auto;
+    .home-title {
+        font-size: 3rem;
     }
 
-    /* Map panel shows when toggled */
-    .home-map--visible {
-        display: flex;
+
+    .home-card-row {
+        flex-direction: row;
+        max-width: 520px;
+    }
+
+
+    .home-card {
         flex: 1;
-        min-height: 0;
-        overflow: auto;
-        align-items: flex-start;
-        justify-content: center;
-        background: #f3f4f6;
-        padding: 16px;
+    }
+}
+
+
+/* ---------- Desktop 1024px+ ---------- */
+@media (min-width: 1024px) {
+    .home-hero {
+        padding: 80px 40px 64px;
     }
 
-    /* Toggle button */
-    .home-map-toggle {
-        display: flex;
-        align-items: center;
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        z-index: 50;
-        background: #1A2B3C;
-        color: white;
-        border: none;
-        border-radius: 999px;
-        padding: 12px 20px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        transition: background 0.15s ease, transform 0.1s ease;
-        white-space: nowrap;
-        gap: 8px;
+
+    .home-title {
+        font-size: 3.5rem;
     }
 
-    .home-map-toggle:hover {
-        background: #2e4057;
-        transform: translateY(-1px);
+
+    .home-subtitle {
+        font-size: 1.05rem;
+        max-width: 440px;
     }
 
-    /* Show hint area on tablet and desktop */
-    .home-map--hint {
-        display: flex;
-        flex: 1;
-        min-height: 0;
-        align-items: center;
-        justify-content: center;
-        background: #f3f4f6;
+
+    .home-card-row {
+        max-width: 580px;
     }
 }
