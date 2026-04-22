@@ -65,6 +65,11 @@ type CategoryGroup = {
     items: GroceryItem[];
 };
 
+type GroceryListProps = {
+    collapsed?: boolean;
+    onToggleCollapse?: () => void;
+};
+
 /*
   CATEGORY_INFO
 
@@ -141,7 +146,7 @@ export default function GroceryList() {
     };
 
     const groups = groupByCategory(items);
-    const remaining = items.length - checked.size;
+    const remaining = items.filter((item) => !checked.has(item.id)).length;
 
 
     useEffect(() => {

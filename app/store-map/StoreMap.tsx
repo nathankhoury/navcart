@@ -256,17 +256,10 @@ export default function StoreMap() {
             <div className="mb-4 flex gap-3">
                 <button
                     className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
-                    onClick={() => setRouteGenerated(true)}
+                    onClick={() => setRouteGenerated((prev) => !prev)}
                     disabled={highlightedSections.length === 0}
                 >
-                    Generate Route
-                </button>
-
-                <button
-                    className="rounded border border-gray-400 bg-white px-4 py-2 text-black hover:bg-gray-100"
-                    onClick={() => setRouteGenerated(false)}
-                >
-                    Clear Route
+                    Toggle Route
                 </button>
             </div>
 

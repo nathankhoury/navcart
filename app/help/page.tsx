@@ -38,7 +38,7 @@ export default function Help() {
                     <section className="help-section">
                         <h2 className="help-section-title">📋 Grocery List</h2>
                         <p className="help-section-text">
-                            The grocery list appears on the left side of the home page.
+                            The grocery list appears on the left side of the store map.
                             It shows all the items you have added, grouped by category.
                             You can tap any item to check it off as you pick it up.
                             Checked items are crossed out and faded so you always know what is left.

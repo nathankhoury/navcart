@@ -1,25 +1,28 @@
+"use client";
+
 import TopBar from "../topbar";
-import "../css/styles.css";
+import GroceryList from "../grocery-list/page";
 import StoreMap from "./StoreMap";
+import "../css/home.css";
 
 export default function StoreMapPage() {
     return (
-    <>
-    <TopBar />
-    
-    <main className="min-h-screen bg-white p-6 text-black">
-        <div className="mx-auto max-w-6xl">
-            <h1 className="mb-3 text-3xl font-bold">
-                Market Basket Store Map
-            </h1>
-            <p className="mb-6 text-gray-700">
-                This page visualizes store sections and highlights where grocery 
-                items are located based on the inventory dataset.
-            </p>
-            
-            <StoreMap />
+        <div className="home-wrapper">
+            <TopBar />
+
+            <main className="home-main">
+
+                {/* Grocery list sidebar - always visible */}
+                <div className="home-list">
+                    <GroceryList />
+                </div>
+
+                {/* Map panel - always visible */}
+                <div className="home-map home-map--visible">
+                    <StoreMap />
+                </div>
+
+            </main>
         </div>
-    </main>
-    </>
     );
 }

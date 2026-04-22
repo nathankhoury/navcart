@@ -191,17 +191,6 @@ export default function Profile() {
                         enabled={coldItemPriority}
                         onToggle={() => setColdItemPriority((v) => !v)}
                     />
-
-                    {/* Divider */}
-                    <div className="mx-6 border-t border-gray-100" />
-
-                    {/* Setting 2: Dynamic Route Calculation */}
-                    <SettingRow
-                        label="Dynamic Route Calculation"
-                        description="Update the visual route as items are checked off if enabled."
-                        enabled={dynamicRoute}
-                        onToggle={() => setDynamicRoute((v) => !v)}
-                    />
                 </div>
             </main>
         </div>

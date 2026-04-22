@@ -1,48 +1,55 @@
-"use client";
 
-import { useState } from "react";
+
+import Link from "next/link";
 import TopBar from "./topbar";
-import GroceryList from "./grocery-list/page";
-import StoreMap from "./store-map/StoreMap";
 import "./css/home.css";
 
+
 export default function Home() {
-  const [showMap, setShowMap] = useState(false);
+    return (
+        <div className="home-wrapper">
+            <TopBar />
 
-  return (
-    <div className="home-wrapper">
-      <TopBar />
-      <main className="home-main">
 
-        {/* Grocery list sidebar - always visible */}
-        <div className="home-list">
-          <GroceryList />
+            <main className="home-hero">
+                <p className="home-eyebrow">NavCart</p>
+                <h1 className="home-title">Shopping Made Simple</h1>
+                <p className="home-subtitle">
+                    Build your grocery list and get a personalized route through
+                    the store!
+                </p>
+
+
+                <div className="home-get-started">
+                    <p className="home-get-started-heading">Get Started</p>
+
+
+                    <div className="home-card-row">
+
+
+                        <Link href="/list-manager" className="home-card home-card--primary">
+                            <div className="home-card-icon home-card-icon--green">🛒</div>
+                            <p className="home-card-label">Create Shopping List</p>
+                            <p className="home-card-desc">
+                                Add items and organize your grocery run.
+                            </p>
+                            <span className="home-card-arrow">→</span>
+                        </Link>
+
+
+                        <Link href="/store-map" className="home-card">
+                            <div className="home-card-icon home-card-icon--blue">🗺️</div>
+                            <p className="home-card-label">View Store Map</p>
+                            <p className="home-card-desc">
+                                See the store layout and plan your route.
+                            </p>
+                            <span className="home-card-arrow">→</span>
+                        </Link>
+
+
+                    </div>
+                </div>
+            </main>
         </div>
-
-        {/* Map panel - tablet and desktop only */}
-        <div className={`home-map${showMap ? " home-map--visible" : " home-map--hint"}`}>
-          {showMap ? (
-            <StoreMap />
-          ) : (
-            <div className="home-map-hint">
-              <span className="home-map-hint-icon">🗺️</span>
-              <p className="home-map-hint-text">Store map is hidden</p>
-              <p className="home-map-hint-sub">Press the button in the bottom right corner to show it</p>
-            </div>
-          )}
-        </div>
-
-        {/* Toggle button - tablet and desktop only */}
-        <button
-          type="button"
-          onClick={() => setShowMap((prev) => !prev)}
-          className="home-map-toggle"
-          title={showMap ? "Hide map" : "Show map"}
-        >
-          {showMap ? "❌ Hide Map" : "🗺️ Show Map"}
-        </button>
-
-      </main>
-    </div>
-  );
+    );
 }
