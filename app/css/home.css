@@ -7,6 +7,61 @@
     color: #111827;
 }
 
+/* ---------- Main two-column layout ---------- */
+.home-main {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    flex-direction: column-reverse; /* mobile: map on top, list below */
+}
+
+/* ---------- Grocery list sidebar ---------- */
+.home-list {
+    flex-shrink: 0;
+    width: 100%;
+}
+
+/* ---------- Map panel ---------- */
+.home-map--visible {
+    width: 100%;
+    min-height: 60vh;
+    overflow: auto;
+    background: #f3f4f6;
+    padding: 16px;
+}
+
+/* ---------- Tablet 640px+ ---------- */
+@media (min-width: 640px) {
+    .home-main {
+        flex-direction: row; /* sidebar left, map right */
+        min-height: calc(100vh - 48px);
+    }
+
+    .home-list {
+        width: 280px;
+        height: calc(100vh - 48px);
+        position: sticky;
+        top: 0;
+    }
+
+    .home-map--visible {
+        flex: 1;
+        min-height: 0;
+        height: calc(100vh - 48px);
+        overflow: auto;
+    }
+}
+
+/* ---------- Desktop 1024px+ ---------- */
+@media (min-width: 1024px) {
+    .home-list {
+        width: 340px;
+    }
+}
+
+/* =========================================================
+   LANDING PAGE STYLES (home page / page.tsx)
+   ========================================================= */
 
 /* ---------- Hero section ---------- */
 .home-hero {
@@ -19,7 +74,6 @@
     text-align: center;
 }
 
-
 .home-eyebrow {
     font-size: 40px;
     font-weight: 600;
@@ -29,7 +83,6 @@
     margin: 0 0 14px;
 }
 
-
 .home-title {
     font-size: 1rem;
     font-weight: 700;
@@ -38,7 +91,6 @@
     line-height: 1.15;
 }
 
-
 .home-subtitle {
     font-size: 0.8rem;
     color: #6b7280;
@@ -46,7 +98,6 @@
     max-width: 380px;
     line-height: 1.65;
 }
-
 
 /* ---------- Get Started section ---------- */
 .home-get-started {
@@ -57,7 +108,6 @@
     width: 100%;
 }
 
-
 .home-get-started-heading {
     font-size: 0.85rem;
     font-weight: 600;
@@ -67,7 +117,6 @@
     margin: 0;
 }
 
-
 .home-card-row {
     display: flex;
     flex-direction: column;
@@ -75,7 +124,6 @@
     width: 100%;
     max-width: 320px;
 }
-
 
 /* ---------- Action cards ---------- */
 .home-card {
@@ -92,23 +140,19 @@
     transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
-
 .home-card:hover {
     box-shadow: 0 4px 18px rgba(26, 43, 60, 0.12);
     border-color: #b0bec8;
 }
-
 
 .home-card--primary {
     border-color: #4CAF50;
     background: #f4fbf4;
 }
 
-
 .home-card--primary:hover {
     border-color: #3d9955;
 }
-
 
 .home-card-icon {
     width: 38px;
@@ -120,16 +164,13 @@
     font-size: 18px;
 }
 
-
 .home-card-icon--green {
     background: #ddf0dd;
 }
 
-
 .home-card-icon--blue {
     background: #ddeaf7;
 }
-
 
 .home-card-label {
     font-size: 0.95rem;
@@ -138,7 +179,6 @@
     margin: 0;
 }
 
-
 .home-card-desc {
     font-size: 0.85rem;
     color: #6b7280;
@@ -146,12 +186,10 @@
     line-height: 1.5;
 }
 
-
 .home-card-arrow {
     font-size: 1rem;
     color: #9ca3af;
 }
-
 
 /* ---------- Tablet 640px+ ---------- */
 @media (min-width: 640px) {
@@ -159,18 +197,15 @@
         font-size: 3rem;
     }
 
-
     .home-card-row {
         flex-direction: row;
         max-width: 520px;
     }
 
-
     .home-card {
         flex: 1;
     }
 }
-
 
 /* ---------- Desktop 1024px+ ---------- */
 @media (min-width: 1024px) {
@@ -178,19 +213,18 @@
         padding: 80px 40px 64px;
     }
 
-
     .home-title {
         font-size: 3.5rem;
     }
-
 
     .home-subtitle {
         font-size: 1.05rem;
         max-width: 440px;
     }
 
-
     .home-card-row {
         max-width: 580px;
     }
+
+    
 }
