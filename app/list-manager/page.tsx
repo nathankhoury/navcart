@@ -96,6 +96,7 @@ export default function ListManager() {
       Currently selected department/category
     */
     const [selectedDepartment, setSelectedDepartment] = useState("");
+    const [listLoaded, setListLoaded] = useState(false);
 
     /*
       Convert the Inventory object into an array of entries once.
@@ -127,7 +128,7 @@ export default function ListManager() {
     */
     useEffect(() => {
         const saved = localStorage.getItem("navcart-current-list");
-
+        
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
@@ -136,14 +137,16 @@ export default function ListManager() {
                 localStorage.removeItem("navcart-current-list");
             }
         }
+        setListLoaded(true);
     }, []);
 
     /*
       Save current active list whenever it changes
     */
     useEffect(() => {
+        if (!listLoaded) return;
         localStorage.setItem("navcart-current-list", JSON.stringify(list));
-    }, [list]);
+    }, [list, listLoaded]);
 
     /*
       Load named saved lists from localStorage on page load
