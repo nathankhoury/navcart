@@ -230,6 +230,15 @@
     color: white;
 }
 
+.topbar-mobile-nav-link:focus {
+    outline: none;
+    background-color: transparent;
+}
+
+.topbar-mobile-nav-link:focus:not(:focus-visible) {
+    background-color: transparent;
+}
+
 /* ---------- Mobile only (< 640px) ---------- */
 @media (max-width: 639px) {
 
