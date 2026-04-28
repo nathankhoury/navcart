@@ -11,6 +11,9 @@
     overflow: visible;
     position: relative;
     z-index: 100;
+    height: 56px;
+    min-height: 56px;
+    max-height: 56px;
 }
 
 #topbar-logo {
@@ -104,7 +107,7 @@
 .topbar-dropdown-content {
     position: absolute;
     top: calc(100% + 4px);
-    left: 0;
+    right: 0;
     background-color: #3F5060;
     border-radius: 10px;
     border: 1px solid #6C90BF;
@@ -184,6 +187,98 @@
     user-select: none;
 }
 
+/* ---------- Mobile drawer defaults ---------- */
+#topbar-hamburger {
+    display: none;
+}
+
+#topbar-mobile-drawer {
+    background-color: #1A2B3C;
+    border-top: 1px solid #2e4057;
+    display: none;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease, opacity 0.2s ease;
+    position: absolute; 
+    top: 56px;
+    left: 0;
+    width: 100%;
+    z-index: 99;
+}
+
+#topbar-mobile-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 6px 12px 10px;
+    gap: 2px;
+}
+
+.topbar-mobile-nav-link {
+    color: #cbd5e1;
+    font-size: 14px;
+    font-weight: 500;
+    font-synthesis: none;
+    padding: 10px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.topbar-mobile-nav-link:hover {
+    background-color: #2e4057;
+    color: white;
+}
+
+/* ---------- Mobile only (< 640px) ---------- */
+@media (max-width: 639px) {
+
+    #topbar-hamburger {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        background: none;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        padding: 0;
+        transition: background 0.15s ease;
+    }
+
+    #topbar-hamburger:hover {
+        background-color: #2e4057;
+    }
+
+    #topbar-nav {
+        display: none;
+    }
+
+    #topbar-mobile-drawer {
+        display: block;
+    }
+
+    #topbar-mobile-drawer.topbar-mobile-drawer--open {
+        max-height: 320px;
+        opacity: 1;
+    }
+
+    .topbar-dropbtn {
+        width: auto;
+        min-width: unset;
+        padding: 6px 8px;
+        gap: 0;
+    }
+
+    .topbar-dropbtn span {
+        display: none;
+    }
+}
+
 /* ---------- Tablet 640px+ ---------- */
 @media (min-width: 640px) {
     #topbar-wrapper {
@@ -246,5 +341,4 @@
         font-size: 14px;
         padding: 11px 16px;
     }
-
 }

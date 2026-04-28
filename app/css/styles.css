@@ -466,3 +466,118 @@
     z-index: 9999;
     font-size: 0.95rem;
 }
+
+/* =========================================================
+   PAGE WRAPPER - fixed navbar + tab bar, scrollable content
+   ========================================================= */
+
+#lm-page-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    background: white;
+    color: black;
+}
+
+/* Tab bar - always visible, never scrolls */
+#lm-tab-bar {
+    display: flex;
+    flex-shrink: 0;
+    border-bottom: 2px solid #c1c4c9;
+    background: white;
+}
+
+.lm-tab-btn {
+    flex: 1;
+    padding: 10px 0;
+    font-size: 14px;
+    font-weight: 600;
+    font-synthesis: none;
+    color: #9ca3af;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.lm-tab-btn:hover {
+    color: #4b5563;
+}
+
+.lm-tab-btn--active {
+    color: #1A2B3C;
+    border-bottom-color: #4CAF50;
+}
+
+/* =========================================================
+   MAIN TWO-COLUMN LAYOUT - overrides the original rules
+   ========================================================= */
+
+/* Scrollable area below the fixed tab bar */
+#lm-content-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    min-height: unset;
+}
+
+/* Left panel - flex child instead of inline-block */
+#left {
+    flex: 1;
+    display: block;
+    width: unset;
+    border-right: #7d8ca1 solid 2px;
+}
+
+/* Right panel - flex child instead of inline-block */
+#right {
+    flex: 1;
+    display: block;
+    width: unset;
+}
+
+/* Panels fill height naturally */
+.list-management-panel {
+    min-height: unset;
+}
+
+/* =========================================================
+   MOBILE (< 640px) - tab toggle between panels
+   ========================================================= */
+
+@media (max-width: 639px) {
+    #lm-content-wrapper {
+        display: block;
+    }
+
+    #left,
+    #right {
+        width: 100%;
+        border-right: none;
+    }
+
+    .lm-panel--active {
+        display: block !important;
+    }
+
+    .lm-panel--hidden {
+        display: none !important;
+    }
+}
+
+/* =========================================================
+   DESKTOP (640px+) - hide tab bar, show both panels
+   ========================================================= */
+
+@media (min-width: 640px) {
+    #lm-tab-bar {
+        display: none;
+    }
+
+    .lm-panel--active,
+    .lm-panel--hidden {
+        display: block !important;
+    }
+}

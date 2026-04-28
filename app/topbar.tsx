@@ -39,7 +39,7 @@ import "./css/navbar.css";
     The location dropdown closes automatically when clicking outside of it.
 
     Contributors for this file:
-    Camila Salinas (last modified: 3/22/2026)
+    Camila Salinas (last modified: 4/27/2026)
 */
 
 // Store locations - update this list when real locations are added
@@ -56,6 +56,7 @@ const NAV_LINKS = [
 
 export default function TopBar() {
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [selected, setSelected] = useState<string | null>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const { profilePicUrl, displayName } = useProfile();
@@ -80,8 +81,24 @@ export default function TopBar() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    // Close mobile drawer on route change
+    useEffect(() => {
+        setMobileMenuOpen(false);
+    }, [pathname]);
+
     return (
+        <>
         <div id="topbar-wrapper">
+
+            {/* Hamburger button - mobile only */}
+            <button
+                type="button"
+                id="topbar-hamburger"
+                aria-label="Open menu"
+                onClick={() => setMobileMenuOpen((prev) => !prev)}
+            >
+                {mobileMenuOpen ? "✕" : "☰"}
+            </button>
 
             {/* Logo - always links back to home */}
             <Link href="/" id="topbar-logo-link">
@@ -161,5 +178,21 @@ export default function TopBar() {
                 )}
             </Link>
         </div>
+
+        {/* Mobile slide-down nav drawer */}
+        <div id="topbar-mobile-drawer" className={mobileMenuOpen ? "topbar-mobile-drawer--open" : ""}>
+            <nav id="topbar-mobile-nav">
+                {NAV_LINKS.map(({ href, label }) => (
+                    <Link
+                        key={href}
+                        href={href}
+                        className={`topbar-mobile-nav-link${pathname === href ? " topbar-nav-link--active" : ""}`}
+                    >
+                        {label}
+                    </Link>
+                ))}
+            </nav>
+        </div>
+    </>
     );
 }

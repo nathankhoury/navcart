@@ -75,6 +75,7 @@ export default function ListManager() {
       - load: load-list screen
     */
     const [leftMode, setLeftMode] = useState<"default" | "save" | "load">("default");
+    const [lmTab, setLmTab] = useState<"search" | "list">("search");
 
     /*
       Saved named lists
@@ -353,14 +354,32 @@ export default function ListManager() {
     };
 
     return (
-        <div id="lm-page-wrapper" className="bg-white text-black">
-            {/* Top navigation/header */}
+        <div id="lm-page-wrapper">
             <TopBar />
 
-            {/* Main two-panel layout */}
+            {/* Tab bar - always visible */}
+            <div id="lm-tab-bar">
+                <button
+                    type="button"
+                    className={lmTab === "search" ? "lm-tab-btn lm-tab-btn--active" : "lm-tab-btn"}
+                    onClick={() => setLmTab("search")}
+                >
+                    🔍 Search Items
+                </button>
+                <button
+                    type="button"
+                    className={lmTab === "list" ? "lm-tab-btn lm-tab-btn--active" : "lm-tab-btn"}
+                    onClick={() => setLmTab("list")}
+                >
+                    📋 Your List
+                </button>
+            </div>
+
+            {/* Scrollable content area */}
             <div id="lm-content-wrapper">
+
                 {/* ========================= LEFT PANEL ========================= */}
-                <div id="left" className="list-management-panel">
+                <div id="left" className={`list-management-panel${lmTab === "search" ? " lm-panel--active" : " lm-panel--hidden"}`}>
                     {/* DEFAULT MODE: normal search + department browsing */}
                     {leftMode === "default" && (
                         <>
@@ -409,10 +428,10 @@ export default function ListManager() {
                                         <button
                                             key={dept}
                                             className={`department-box ${
-                                                selectedDepartment === dept
-                                                    ? "department-box-active"
+                                                selectedDepartment === dept 
+                                                    ? "department-box-active" 
                                                     : ""
-                                            }`}
+                                                }`}
                                             onClick={() => setSelectedDepartment(dept)}
                                         >
                                             {dept}
@@ -421,10 +440,10 @@ export default function ListManager() {
                                 </div>
 
                                 {selectedDepartment && (
-                                    <button
-                                        className="clear-department-button"
+                                    <button 
+                                        className="clear-department-button" 
                                         onClick={() => setSelectedDepartment("")}
-                                    >
+                                        >
                                         Clear Department Filter
                                     </button>
                                 )}
@@ -466,21 +485,21 @@ export default function ListManager() {
 
                             <div className="save-panel-card">
                                 <label className="save-label">List Name</label>
-                                <input
-                                    type="text"
-                                    value={listName}
-                                    onChange={(e) => setListName(e.target.value)}
-                                    placeholder="A creative list name!"
-                                    className="save-input"
-                                />
+                                <input 
+                                    type="text" 
+                                    value={listName} 
+                                    onChange={(e) => setListName(e.target.value)} 
+                                    placeholder="A creative list name!" 
+                                    className="save-input" 
+                                    />
 
                                 <label className="save-label">Description</label>
-                                <textarea
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
-                                    placeholder="Some description of list contents/purpose"
-                                    className="save-textarea"
-                                />
+                                <textarea 
+                                    value={description} 
+                                    onChange={(e) => setDescription(e.target.value)} 
+                                    placeholder="Some description of list contents/purpose" 
+                                    className="save-textarea" 
+                                    />
 
                                 <button className="save-panel-button" onClick={saveList}>
                                     Save
@@ -488,15 +507,15 @@ export default function ListManager() {
                             </div>
 
                             <h2 className="saved-lists-title">Saved Lists</h2>
-
+                            
                             <div className="saved-lists-stack">
                                 {Object.keys(savedLists).length === 0 ? (
                                     <p className="empty-saved-text">No saved lists yet.</p>
                                 ) : (
                                     Object.entries(savedLists).map(([name, data]) => (
                                         <div key={name} className="saved-list-card">
-                                            <button
-                                                className="saved-list-main"
+                                            <button 
+                                                className="saved-list-main" 
                                                 onClick={() => loadList(name)}
                                             >
                                                 <div className="saved-list-name">{name}</div>
@@ -505,12 +524,12 @@ export default function ListManager() {
                                                 </div>
                                             </button>
 
-                                            <button
-                                                className="saved-list-delete"
+                                            <button 
+                                                className="saved-list-delete" 
                                                 onClick={() => deleteSavedList(name)}
-                                            >
-                                                Delete
-                                            </button>
+                                                >
+                                                    Delete
+                                                </button>
                                         </div>
                                     ))
                                 )}
@@ -535,8 +554,8 @@ export default function ListManager() {
                                 ) : (
                                     Object.entries(savedLists).map(([name, data]) => (
                                         <div key={name} className="saved-list-card">
-                                            <button
-                                                className="saved-list-main"
+                                            <button 
+                                                className="saved-list-main" 
                                                 onClick={() => loadList(name)}
                                             >
                                                 <div className="saved-list-name">{name}</div>
@@ -545,8 +564,8 @@ export default function ListManager() {
                                                 </div>
                                             </button>
 
-                                            <button
-                                                className="saved-list-delete"
+                                            <button 
+                                                className="saved-list-delete" 
                                                 onClick={() => deleteSavedList(name)}
                                             >
                                                 Delete
@@ -560,7 +579,7 @@ export default function ListManager() {
                 </div>
 
                 {/* ========================= RIGHT PANEL ========================= */}
-                <div id="right" className="list-management-panel">
+                <div id="right" className={`list-management-panel${lmTab === "list" ? " lm-panel--active" : " lm-panel--hidden"}`}>
                     <h1 className="panel-header text-4xl font-bold text-headingr">
                         Your List
                     </h1>
@@ -573,32 +592,33 @@ export default function ListManager() {
                     {leftMode === "default" ? (
                         <>
                             <div>
-                                <button
-                                    id="saveListButton"
+                                <button 
+                                    id="saveListButton" 
                                     className="listControlButton font-bold py-2 px-4 rounded"
-                                    onClick={() => setLeftMode("save")}
+                                    onClick={() => { setLeftMode("save"); 
+                                    setLmTab("search"); }}
                                 >
                                     Save List
                                 </button>
 
-                                <button
-                                    id="loadListButton"
+                                <button 
+                                    id="loadListButton" 
                                     className="listControlButton font-bold py-2 px-4 rounded"
-                                    onClick={() => setLeftMode("load")}
+                                    onClick={() => { setLeftMode("load"); 
+                                    setLmTab("search"); }}
                                 >
                                     Load List
                                 </button>
 
-                                <button
-                                    id="clearListButton"
+                                <button 
+                                    id="clearListButton" 
                                     className="listControlButton font-bold py-2 px-4 rounded"
                                     onClick={clearCurrentList}
                                 >
                                     Clear List
                                 </button>
-
-                                <button
-                                    id="undoListButton"
+                                <button 
+                                    id="undoListButton" 
                                     className="listControlButton font-bold py-2 px-4 rounded"
                                     onClick={undoLastAction}
                                 >
@@ -608,18 +628,18 @@ export default function ListManager() {
 
                             {/* Search within the current active list */}
                             <div id="searchWrapper">
-                                <input
-                                    id="searchBox"
-                                    type="text"
+                                <input 
+                                    id="searchBox" 
+                                    type="text" 
                                     value={listSearch}
                                     onChange={(e) => setListSearch(e.target.value)}
-                                    placeholder="Search for an item in your list"
+                                    placeholder="Search for an item in your list" 
                                 />
                             </div>
                         </>
                     ) : (
-                        <button
-                            className="return-button"
+                        <button 
+                            className="return-button" 
                             onClick={() => setLeftMode("default")}
                         >
                             Return to List Manager
@@ -634,8 +654,8 @@ export default function ListManager() {
 
                                 return (
                                     <li key={item.id}>
-                                        <button
-                                            className="list-item-button current-list-button"
+                                        <button 
+                                            className="list-item-button current-list-button" 
                                             onClick={() => removeItem(key)}
                                         >
                                             <span id="itemNameDisplayed">{item.name + " "}</span>
@@ -647,6 +667,7 @@ export default function ListManager() {
                         </ul>
                     </div>
                 </div>
+
             </div>
 
             {/* Toast popup message */}
