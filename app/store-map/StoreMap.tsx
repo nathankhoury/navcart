@@ -346,16 +346,16 @@ export default function StoreMap() {
                 </button>
             </div>
 
-            <div className="overflow-hidden">
+            <div className="overflow-hidden md:h-auto h-[300px]">
                 <div
-                    className="relative mx-auto rounded-lg border-2 border-gray-400 bg-gray-50"
-                    style={{
-                        width: "1100px",
-                        height: "650px",
-                        transform: "scale(0.78)",
-                        transformOrigin: "top left",
-                    }}
-                >
+                className="relative mx-auto rounded-lg border-2 border-gray-400 bg-gray-50 md:scale-100 scale-[0.43] origin-top-left"
+                style={{
+                    width: "1100px",
+                    height: "650px",
+                    transform: "scale(0.785)",
+                    transformOrigin: "top left",
+                }}
+    >
                     <svg
                         className="absolute left-0 top-0 pointer-events-none"
                         width="1100"
