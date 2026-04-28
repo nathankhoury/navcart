@@ -318,13 +318,23 @@ export default function StoreMap() {
                     <p>No items currently selected. Go to Manage List to add items.</p>
                 ) : routeItems.length === 0 ? (
                     <p>All items on your current list have been checked off.</p>
-                ) : (
-                    <p>
-                        {routeItems.length} remaining item
-                        {routeItems.length === 1 ? "" : "s"} available for routing.
-                    </p>
-                )}
-            </div>
+                ) : routeGenerated && routeSections.length > 0 ? (
+                <p>
+                    Route:{" "}
+                    {routeSections.map((section, index) => (
+                        <span key={section.id}>
+                            {section.label}
+                            {index < routeSections.length - 1 && " → "}
+                            </span>
+                        ))}
+                        </p>
+                        ) : (
+                        <p>
+                            {routeItems.length} remaining item
+                            {routeItems.length === 1 ? "" : "s"} available for routing.
+                            </p>
+                        )}
+                        </div>
 
             <div className="mb-4 flex gap-3">
                 <button
