@@ -137,7 +137,7 @@
 }
 
 #clearListButton:active {
-    background-color: #7a4747;
+    background-color: #ad5555;
 }
 
 /* Undo button */
@@ -152,6 +152,54 @@
 
 #undoListButton:active {
     background-color: #b7984f;
+}
+
+/* =========================================================
+   MODE SELECTION
+   ========================================================= */
+
+/* Holds Search Items and Browse Departments buttons */
+.mode-selection {
+    width: 80%;
+    margin: 30px auto;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+}
+
+/* Large choice buttons for selecting how to add items */
+.mode-button {
+    background: rgb(148, 210, 236);
+    color: black;
+    border: 2px solid #1A2B3C;
+    border-radius: 16px;
+    padding: 24px 28px;
+    font-weight: bold;
+    font-size: 1.05rem;
+    cursor: pointer;
+    min-width: 180px;
+}
+
+/* Hover effect for mode buttons */
+.mode-button:hover {
+    background-color: #58719d;
+}
+
+/* Back button used to return to add-item choice screen */
+.back-button {
+    margin: 10px auto 20px auto;
+    background: #d9d9d9;
+    color: black;
+    border: 1px solid #888;
+    border-radius: 999px;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Hover effect for back button */
+.back-button:hover {
+    background: #cfcfcf;
 }
 
 /* =========================================================
@@ -396,7 +444,7 @@
     padding: 14px 16px;
     cursor: pointer;
 }
-
+/* Highlighted when hovered */
 .saved-list-main:hover {
     background: #f4f8ff;
 }
@@ -416,15 +464,16 @@
 
 /* Delete button for saved lists */
 .saved-list-delete {
-    background: #f4d6d6;
-    border: 1px solid #6f7f96;
+    background: #ffb3b3;
+    border: 1px solid #b94a4a;
     border-radius: 10px;
     padding: 10px 14px;
     cursor: pointer;
+    font-weight: bold;
 }
-
+/* Highlighted when hovered */
 .saved-list-delete:hover {
-    background: #efc7c7;
+    background: #ff9999;
 }
 
 /* Empty state text for saved lists */
@@ -443,7 +492,7 @@
     margin-bottom: 24px;
     cursor: pointer;
 }
-
+/* Highlighted when hovered */
 .return-button:hover {
     background: #ea6d6d;
 }
@@ -465,119 +514,4 @@
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
     z-index: 9999;
     font-size: 0.95rem;
-}
-
-/* =========================================================
-   PAGE WRAPPER - fixed navbar + tab bar, scrollable content
-   ========================================================= */
-
-#lm-page-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-    background: white;
-    color: black;
-}
-
-/* Tab bar - always visible, never scrolls */
-#lm-tab-bar {
-    display: flex;
-    flex-shrink: 0;
-    border-bottom: 2px solid #c1c4c9;
-    background: white;
-}
-
-.lm-tab-btn {
-    flex: 1;
-    padding: 10px 0;
-    font-size: 14px;
-    font-weight: 600;
-    font-synthesis: none;
-    color: #9ca3af;
-    background: none;
-    border: none;
-    border-bottom: 3px solid transparent;
-    cursor: pointer;
-    transition: color 0.15s ease, border-color 0.15s ease;
-}
-
-.lm-tab-btn:hover {
-    color: #4b5563;
-}
-
-.lm-tab-btn--active {
-    color: #1A2B3C;
-    border-bottom-color: #4CAF50;
-}
-
-/* =========================================================
-   MAIN TWO-COLUMN LAYOUT - overrides the original rules
-   ========================================================= */
-
-/* Scrollable area below the fixed tab bar */
-#lm-content-wrapper {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    min-height: unset;
-}
-
-/* Left panel - flex child instead of inline-block */
-#left {
-    flex: 1;
-    display: block;
-    width: unset;
-    border-right: #7d8ca1 solid 2px;
-}
-
-/* Right panel - flex child instead of inline-block */
-#right {
-    flex: 1;
-    display: block;
-    width: unset;
-}
-
-/* Panels fill height naturally */
-.list-management-panel {
-    min-height: unset;
-}
-
-/* =========================================================
-   MOBILE (< 640px) - tab toggle between panels
-   ========================================================= */
-
-@media (max-width: 639px) {
-    #lm-content-wrapper {
-        display: block;
-    }
-
-    #left,
-    #right {
-        width: 100%;
-        border-right: none;
-    }
-
-    .lm-panel--active {
-        display: block !important;
-    }
-
-    .lm-panel--hidden {
-        display: none !important;
-    }
-}
-
-/* =========================================================
-   DESKTOP (640px+) - hide tab bar, show both panels
-   ========================================================= */
-
-@media (min-width: 640px) {
-    #lm-tab-bar {
-        display: none;
-    }
-
-    .lm-panel--active,
-    .lm-panel--hidden {
-        display: block !important;
-    }
 }
