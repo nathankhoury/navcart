@@ -43,7 +43,7 @@ import "./css/navbar.css";
 */
 
 // Store locations - update this list when real locations are added
-const LOCATIONS = ["40 Federal St, Lynn", "Location 2", "Location 3"];
+const LOCATIONS = ["40 Federal St, Lynn, MA", "More Locations Coming Soon!"];
 
 // Nav links - add more here if needed
 const NAV_LINKS = [

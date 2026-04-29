@@ -2,7 +2,7 @@
 
 import TopBar from "../topbar";
 import Image from "next/image";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useProfile } from "../context/ProfileContext";
 
 /*
@@ -20,9 +20,24 @@ export default function Profile() {
 
     // Profile info state
     const [handle] = useState("@janedoe"); // handle is not currently editable
-    const [memberSince] = useState("01/14/2025"); // static, not editable
+    //const [memberSince] = useState("01/14/2025"); // static, not editable
     const { profilePicUrl, displayName, setProfilePicUrl, setDisplayName } = useProfile();
 
+    const [memberSince, setMemberSince] = useState<string | null>(null);
+
+    useEffect(() => {
+        const storedDate = localStorage.getItem("memberSince");
+
+        if (storedDate) {
+            setMemberSince(storedDate);
+        } else {
+            const now = new Date();
+            const formatted = now.toLocaleDateString(); // e.g. 4/29/2026
+            localStorage.setItem("memberSince", formatted);
+            setMemberSince(formatted);
+        }
+    }, []);
+    
     // Temporary edit state (only committed on Save)
     const [draftName, setDraftName] = useState(displayName);
     const [draftPicUrl, setDraftPicUrl] = useState<string | null>(profilePicUrl);
@@ -176,21 +191,6 @@ export default function Profile() {
                             </button>
                         )}
                     </div>
-                </div>
-
-                {/* Settings Area */}
-                <div className="max-w-md mx-auto mt-6 bg-white rounded-2xl shadow-sm border border-gray-400 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-100">
-                        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Settings</h2>
-                    </div>
-
-                    {/* Setting 1: Cold Item Priority */}
-                    <SettingRow
-                        label="Cold Item Priority"
-                        description="Force route to be calculated with all frozen, cold, and produce items at the end if enabled."
-                        enabled={coldItemPriority}
-                        onToggle={() => setColdItemPriority((v) => !v)}
-                    />
                 </div>
             </main>
         </div>
