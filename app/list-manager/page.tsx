@@ -1,4 +1,5 @@
 "use client";
+
 /*
   React hooks:
   - useState: stores interactive state
@@ -15,7 +16,6 @@ import TopBar from "../topbar";
 /*
   Main stylesheet for the list manager page
 */
-
 import "../css/styles.css";
 
 /*
@@ -42,64 +42,53 @@ type LastAction =
     | { type: "clear"; previousList: string[] }
     | null;
 
-/*
-  Main List Manager page
-*/
 export default function ListManager() {
-    /*
-      Left panel search input
-    */
+    /* ========================= STATE ========================= */
+
+    // Text typed into the item search bar
     const [query, setQuery] = useState("");
 
-    /*
-      Current active grocery list shown on the right side.
-      Stores keys that match Inventory[key].
-    */
+    // Current grocery list being edited
     const [list, setList] = useState<string[]>([]);
 
-    /*
-      Save-list form fields
-    */
+    // Save-list form fields
     const [listName, setListName] = useState("");
     const [description, setDescription] = useState("");
 
-    /*
-      Search text for searching within the user's current list
-    */
+    // Search bar for finding an item already in the current list
     const [listSearch, setListSearch] = useState("");
 
     /*
-      Controls what appears on the left panel:
-      - default: normal search + departments
-      - save: save-list screen
-      - load: load-list screen
+      Controls whether the user is choosing:
+      - none: show choice buttons
+      - search: show search bar/results
+      - department: show department browser
+    */
+    const [browseMode, setBrowseMode] = useState<"none" | "search" | "department">("none");
+
+    /*
+      Controls the left panel:
+      - default: add items
+      - save: save list screen
+      - load: load saved list screen
     */
     const [leftMode, setLeftMode] = useState<"default" | "save" | "load">("default");
 
-    /*
-      Saved named lists
-    */
+    // Saved lists stored by name
     const [savedLists, setSavedLists] = useState<SavedListMap>({});
 
-    /*
-      Toast / popup message shown near the bottom of the page
-    */
+    // Popup/toast message
     const [toastMessage, setToastMessage] = useState("");
 
-    /*
-      Last action for Undo support
-    */
+    // Last action for undo
     const [lastAction, setLastAction] = useState<LastAction>(null);
 
-    /*
-      Currently selected department/category
-    */
+    // Selected department/category
     const [selectedDepartment, setSelectedDepartment] = useState("");
 
-    /*
-      Convert the Inventory object into an array of entries once.
-      Each entry is [key, item].
-    */
+    /* ========================= DATA PREP ========================= */
+
+    // Convert Inventory object into an array of [key, item]
     const inventoryEntries = useMemo(() => {
         return Object.entries(Inventory) as [string, any][];
     }, []);
@@ -112,7 +101,7 @@ export default function ListManager() {
     const departments = useMemo(() => {
         const uniqueCategories = new Set<string>();
 
-        inventoryEntries.forEach(([key, item]) => {
+        inventoryEntries.forEach(([_, item]) => {
             if (item.category && String(item.category).trim()) {
                 uniqueCategories.add(String(item.category).trim());
             }
@@ -121,9 +110,9 @@ export default function ListManager() {
         return Array.from(uniqueCategories).sort((a, b) => a.localeCompare(b));
     }, [inventoryEntries]);
 
-    /*
-      Load current active list from localStorage when page first opens
-    */
+    /* ========================= LOCAL STORAGE ========================= */
+
+    // Load current list when page opens
     useEffect(() => {
         const saved = localStorage.getItem("navcart-current-list");
 
@@ -137,16 +126,12 @@ export default function ListManager() {
         }
     }, []);
 
-    /*
-      Save current active list whenever it changes
-    */
+    // Save current list whenever it changes
     useEffect(() => {
         localStorage.setItem("navcart-current-list", JSON.stringify(list));
     }, [list]);
 
-    /*
-      Load named saved lists from localStorage on page load
-    */
+    // Load saved lists when page opens
     useEffect(() => {
         const storedLists = localStorage.getItem("navcart-saved-lists");
 
@@ -160,9 +145,7 @@ export default function ListManager() {
         }
     }, []);
 
-    /*
-      Automatically hide the toast message after a short time
-    */
+    // Hide toast message after a short time
     useEffect(() => {
         if (!toastMessage) return;
 
@@ -173,6 +156,8 @@ export default function ListManager() {
         return () => clearTimeout(timer);
     }, [toastMessage]);
 
+    /* ========================= FILTERING ========================= */
+
     /*
       Left-side search results from typed search.
       Matches item name, category, or location.
@@ -182,7 +167,7 @@ export default function ListManager() {
 
         if (!q) return [];
 
-        return inventoryEntries.filter(([key, item]) =>
+        return inventoryEntries.filter(([_, item]) =>
             String(item.name).toLowerCase().includes(q) ||
             String(item.category || "").toLowerCase().includes(q) ||
             String(item.location || "").toLowerCase().includes(q)
@@ -216,11 +201,13 @@ export default function ListManager() {
     const departmentResults = useMemo(() => {
         if (!selectedDepartment) return [];
 
-        return inventoryEntries.filter(([key, item]) =>
+        return inventoryEntries.filter(([_, item]) =>
             String(item.category || "").trim().toLowerCase() ===
             selectedDepartment.trim().toLowerCase()
         );
     }, [selectedDepartment, inventoryEntries]);
+
+    /* ========================= ACTIONS ========================= */
 
     /*
       Add an item to the current active list
@@ -286,6 +273,7 @@ export default function ListManager() {
             setList(selected.items);
             localStorage.setItem("navcart-current-list", JSON.stringify(selected.items));
             setLeftMode("default");
+            setBrowseMode("none");
             setToastMessage(`Loaded "${name}"`);
         }
     };
@@ -294,7 +282,7 @@ export default function ListManager() {
       Delete a saved list after confirmation
     */
     const deleteSavedList = (name: string) => {
-        const confirmed = window.confirm(`Are you sure you want to delete "${name}"?`);
+        const confirmed = window.confirm(`Are you sure you want to delete saved list "${name}"?`);
 
         if (!confirmed) return;
 
@@ -303,7 +291,7 @@ export default function ListManager() {
 
         setSavedLists(updated);
         localStorage.setItem("navcart-saved-lists", JSON.stringify(updated));
-        setToastMessage(`Deleted "${name}"`);
+        setToastMessage(`Deleted saved list "${name}"`);
     };
 
     /*
@@ -312,7 +300,7 @@ export default function ListManager() {
     */
     const clearCurrentList = () => {
         const confirmed = window.confirm(
-            "Are you sure you want to clear the list you are currently editing?"
+            "Are you sure you want to clear the current list you are editing?"
         );
 
         if (!confirmed) return;
@@ -330,7 +318,10 @@ export default function ListManager() {
       - undo clear
     */
     const undoLastAction = () => {
-        if (!lastAction) return;
+        if (!lastAction) {
+            setToastMessage("Nothing to undo");
+            return;
+        }
 
         if (lastAction.type === "add") {
             setList((prev) => prev.filter((k) => k !== lastAction.itemKey));
@@ -352,6 +343,8 @@ export default function ListManager() {
         setLastAction(null);
     };
 
+    /* ========================= PAGE UI ========================= */
+
     return (
         <div id="lm-page-wrapper" className="bg-white text-black">
             {/* Top navigation/header */}
@@ -361,103 +354,152 @@ export default function ListManager() {
             <div id="lm-content-wrapper">
                 {/* ========================= LEFT PANEL ========================= */}
                 <div id="left" className="list-management-panel">
-                    {/* DEFAULT MODE: normal search + department browsing */}
                     {leftMode === "default" && (
                         <>
                             <h1 className="panel-header text-4xl font-bold text-heading">
-                                Search Items
+                                Add Items
                             </h1>
 
                             <p className="tracking-widest text-lg text-gray-600">
-                                Click or drag to add items to your list
+                                Choose how you want to add items to your list
                             </p>
 
-                            {/* SEARCH BAR FIRST */}
-                            <div id="searchWrapper">
-                                <input
-                                    id="searchBox"
-                                    type="text"
-                                    value={query}
-                                    onChange={(e) => setQuery(e.target.value)}
-                                    placeholder="Type a grocery item to search!"
-                                />
-
-                                {/* Typed search results */}
-                                <ul id="searchResults" className="list-none pl-0">
-                                    {results.map(([key, item]) => (
-                                        <li key={item.id}>
-                                            <button
-                                                className="list-item-button search-result-button"
-                                                onClick={() => addItem(key)}
-                                            >
-                                                <span id="itemNameDisplayed">{item.name + " "}</span>
-                                                <span id="itemLoc">
-                                                    {item.location || item.category}
-                                                </span>
-                                            </button>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            {/* DEPARTMENT BOXES BELOW SEARCH */}
-                            <div className="department-section">
-                                <h2 className="department-title">Browse by Department</h2>
-
-                                <div className="department-grid">
-                                    {departments.map((dept) => (
-                                        <button
-                                            key={dept}
-                                            className={`department-box ${
-                                                selectedDepartment === dept
-                                                    ? "department-box-active"
-                                                    : ""
-                                            }`}
-                                            onClick={() => setSelectedDepartment(dept)}
-                                        >
-                                            {dept}
-                                        </button>
-                                    ))}
-                                </div>
-
-                                {selectedDepartment && (
+                            {/* User chooses either Search or Department Browse */}
+                            {browseMode === "none" && (
+                                <div className="mode-selection">
                                     <button
-                                        className="clear-department-button"
-                                        onClick={() => setSelectedDepartment("")}
+                                        className="mode-button"
+                                        onClick={() => setBrowseMode("search")}
                                     >
-                                        Clear Department Filter
+                                        Search Items
                                     </button>
-                                )}
-                            </div>
 
-                            {/* Department-based results pulled directly from Inventory */}
-                            {selectedDepartment && (
-                                <div className="department-results-section">
-                                    <h3 className="department-results-title">
-                                        {selectedDepartment} Items
-                                    </h3>
-
-                                    <ul id="searchResults" className="list-none pl-0">
-                                        {departmentResults.map(([key, item]) => (
-                                            <li key={item.id}>
-                                                <button
-                                                    className="list-item-button search-result-button"
-                                                    onClick={() => addItem(key)}
-                                                >
-                                                    <span id="itemNameDisplayed">{item.name + " "}</span>
-                                                    <span id="itemLoc">
-                                                        {item.location || item.category}
-                                                    </span>
-                                                </button>
-                                            </li>
-                                        ))}
-                                    </ul>
+                                    <button
+                                        className="mode-button"
+                                        onClick={() => setBrowseMode("department")}
+                                    >
+                                        Browse Departments
+                                    </button>
                                 </div>
+                            )}
+
+                            {/* Search mode only */}
+                            {browseMode === "search" && (
+                                <>
+                                    <button
+                                        className="back-button"
+                                        onClick={() => {
+                                            setBrowseMode("none");
+                                            setQuery("");
+                                        }}
+                                    >
+                                        ← Back
+                                    </button>
+
+                                    <div id="searchWrapper">
+                                        <input
+                                            id="searchBox"
+                                            type="text"
+                                            value={query}
+                                            onChange={(e) => setQuery(e.target.value)}
+                                            placeholder="Type a grocery item to search!"
+                                        />
+
+                                        <ul id="searchResults" className="list-none pl-0">
+                                            {results.map(([key, item]) => (
+                                                <li key={item.id}>
+                                                    <button
+                                                        className="list-item-button search-result-button"
+                                                        onClick={() => addItem(key)}
+                                                    >
+                                                        <span id="itemNameDisplayed">
+                                                            {item.name + " "}
+                                                        </span>
+                                                        <span id="itemLoc">
+                                                            {item.location || item.category}
+                                                        </span>
+                                                    </button>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </>
+                            )}
+
+                            {/* Department mode only */}
+                            {browseMode === "department" && (
+                                <>
+                                    <button
+                                        className="back-button"
+                                        onClick={() => {
+                                            setBrowseMode("none");
+                                            setSelectedDepartment("");
+                                        }}
+                                    >
+                                        ← Back
+                                    </button>
+
+                                    {/* DEPARTMENT BOXES BELOW SEARCH */}
+                                    <div className="department-section">
+                                        <h2 className="department-title">Browse by Department</h2>
+
+                                        <div className="department-grid">
+                                            {departments.map((dept) => (
+                                                <button
+                                                    key={dept}
+                                                    className={`department-box ${
+                                                        selectedDepartment === dept
+                                                            ? "department-box-active"
+                                                            : ""
+                                                    }`}
+                                                    onClick={() => setSelectedDepartment(dept)}
+                                                >
+                                                    {dept}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        {selectedDepartment && (
+                                            <button
+                                                className="clear-department-button"
+                                                onClick={() => setSelectedDepartment("")}
+                                            >
+                                                Clear Department Filter
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    {/* Department-based results pulled directly from Inventory */}
+                                    {selectedDepartment && (
+                                        <div className="department-results-section">
+                                            <h3 className="department-results-title">
+                                                {selectedDepartment} Items
+                                            </h3>
+
+                                            <ul id="searchResults" className="list-none pl-0">
+                                                {departmentResults.map(([key, item]) => (
+                                                    <li key={item.id}>
+                                                        <button
+                                                            className="list-item-button search-result-button"
+                                                            onClick={() => addItem(key)}
+                                                        >
+                                                            <span id="itemNameDisplayed">
+                                                                {item.name + " "}
+                                                            </span>
+                                                            <span id="itemLoc">
+                                                                {item.location || item.category}
+                                                            </span>
+                                                        </button>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </>
                     )}
-
-                    {/* SAVE MODE */}
+                    {/*SAVE MODE */}
                     {leftMode === "save" && (
                         <>
                             <h1 className="panel-header text-4xl font-bold text-heading">
@@ -509,7 +551,7 @@ export default function ListManager() {
                                                 className="saved-list-delete"
                                                 onClick={() => deleteSavedList(name)}
                                             >
-                                                Delete
+                                                Delete Saved List
                                             </button>
                                         </div>
                                     ))
@@ -517,7 +559,6 @@ export default function ListManager() {
                             </div>
                         </>
                     )}
-
                     {/* LOAD MODE */}
                     {leftMode === "load" && (
                         <>
@@ -526,7 +567,7 @@ export default function ListManager() {
                             </h1>
 
                             <p className="tracking-widest text-lg text-gray-600">
-                                Click a saved list to load the list&apos;s contents in place of your current items
+                                Click a saved list to load its contents in place of your current items
                             </p>
 
                             <div className="saved-lists-stack">
@@ -549,7 +590,7 @@ export default function ListManager() {
                                                 className="saved-list-delete"
                                                 onClick={() => deleteSavedList(name)}
                                             >
-                                                Delete
+                                                Delete Saved List
                                             </button>
                                         </div>
                                     ))
@@ -566,9 +607,8 @@ export default function ListManager() {
                     </h1>
 
                     <p className="tracking-widest text-lg text-gray-600">
-                        Click or drag to remove items
+                        Click to remove items
                     </p>
-
                     {/* In default mode, show top action buttons + search within list */}
                     {leftMode === "default" ? (
                         <>
@@ -594,7 +634,7 @@ export default function ListManager() {
                                     className="listControlButton font-bold py-2 px-4 rounded"
                                     onClick={clearCurrentList}
                                 >
-                                    Clear List
+                                    Clear Current List
                                 </button>
 
                                 <button
@@ -605,7 +645,6 @@ export default function ListManager() {
                                     Undo
                                 </button>
                             </div>
-
                             {/* Search within the current active list */}
                             <div id="searchWrapper">
                                 <input
@@ -620,12 +659,14 @@ export default function ListManager() {
                     ) : (
                         <button
                             className="return-button"
-                            onClick={() => setLeftMode("default")}
+                            onClick={() => {
+                                setLeftMode("default");
+                                setBrowseMode("none");
+                            }}
                         >
                             Return to List Manager
                         </button>
                     )}
-
                     {/* Current active list items */}
                     <div id="listContentsWrapper">
                         <ul id="listContents" className="list-none pl-0">
@@ -638,7 +679,9 @@ export default function ListManager() {
                                             className="list-item-button current-list-button"
                                             onClick={() => removeItem(key)}
                                         >
-                                            <span id="itemNameDisplayed">{item.name + " "}</span>
+                                            <span id="itemNameDisplayed">
+                                                {item.name + " "}
+                                            </span>
                                             <span>{item.location || item.category}</span>
                                         </button>
                                     </li>
@@ -648,7 +691,6 @@ export default function ListManager() {
                     </div>
                 </div>
             </div>
-
             {/* Toast popup message */}
             {toastMessage && <div className="toast-message">{toastMessage}</div>}
         </div>
