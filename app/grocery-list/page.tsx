@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Inventory from "../DATA/data_final";
 import { useState, useEffect } from "react";
+import { marketBasketSections } from "../store-map/marketBasketData";
+import { GroceryItem, StoreSection, RoutePoint } from "../store-map/types";
 import Link from "next/link";
 import "../css/grocerylist.css";
 
@@ -85,6 +87,54 @@ const CATEGORY_INFO: Record<string, { emoji: string; order: number }> = {
 };
 
 /*
+ Reusing Richie's code from StoreMap.tsx to sort by the route's order and render the results
+ by that metric, rather than by category
+*/
+
+export function getAisleNumber(code: string): number | null {
+  if (!code.startsWith("A")) return null;
+  const num = Number(code.slice(1));
+  return Number.isNaN(num) ? null : num;
+}
+
+export function getSectionPriority(section: StoreSection): number {
+  if (section.code === "PROD") return 1;
+  if (section.code === "BAKE") return 2;
+  if (section.code === "DELI") return 3;
+
+  const aisleNum = getAisleNumber(section.code);
+  if (aisleNum !== null) return 100 - aisleNum;
+
+  if (section.code === "MEAT") return 200;
+  if (section.code === "DAIRY") return 201;
+
+  return 999;
+}
+
+export function getSectionForItem(item: GroceryItem): StoreSection | undefined {
+  return marketBasketSections.find(
+    (section) => section.code === item.code
+  );
+}
+
+export function sortItemsByRouteOrder(items: GroceryItem[]): GroceryItem[] {
+  return [...items].sort((a, b) => {
+    const sectionA = getSectionForItem(a);
+    const sectionB = getSectionForItem(b);
+
+    if (!sectionA || !sectionB) return 0;
+
+    const priorityDiff =
+      getSectionPriority(sectionA) - getSectionPriority(sectionB);
+
+    if (priorityDiff !== 0) return priorityDiff;
+
+    // tie-breaker: left-to-right in store
+    return sectionA.x - sectionB.x;
+  });
+}
+
+/*
   groupByCategory
 
   Takes a flat list of items and groups them by their category field.
@@ -112,7 +162,6 @@ function groupByCategory(items: GroceryItem[]): CategoryGroup[] {
 export default function GroceryList() {
     // Load current list of items into state - initially empty until we load from localStorage in useEffect
     const [items, setItems] = useState<GroceryItem[]>([]);
-
     // Tracks which item IDs have been checked off by the user
     const [checked, setChecked] = useState<Set<number>>(() => {
         if (typeof window === "undefined") return new Set();
@@ -145,7 +194,7 @@ export default function GroceryList() {
         });
     };
 
-    const groups = groupByCategory(items);
+    const sortedItems = sortItemsByRouteOrder(items);
     const remaining = items.filter((item) => !checked.has(item.id)).length;
 
 
@@ -203,69 +252,39 @@ export default function GroceryList() {
                     </div>
                 ) : (
                     /* Render each category group */
-                    groups.map((group) => {
-                        const isCollapsed = collapsed.has(group.category);
-                        const groupChecked = group.items.filter((i) => checked.has(i.id)).length;
+                    sortedItems.map((item, index) => {
+                        const isDone = checked.has(item.id);
 
                         return (
-                            <div key={group.category} className="gl-category">
+                            <button
+                                type="button"
+                                key={item.id}
+                                className={`gl-item${isDone ? " gl-item--checked" : ""}`}
+                                onClick={() => toggle(item.id)}
+                            >
+                                <span className="gl-step-number">
+                                    {index + 1}
+                                </span>
 
-                                {/* Category header - clicking it collapses/expands the group */}
-                                <button
-                                    type="button"
-                                    className="gl-category-header"
-                                    onClick={() => toggleCollapse(group.category)}
-                                >
-                                    <span className="gl-category-left">
-                                        <span className="gl-category-emoji">{group.emoji}</span>
-                                        <span className="gl-category-label">{group.category.toUpperCase()}</span>
-                                        <span className="gl-category-count">{groupChecked}/{group.items.length}</span>
-                                    </span>
-                                    {/* Caret icon rotates when the category is collapsed */}
-                                    <Image
-                                        src="/keyboard_arrow_down_28dp_9CA3AF.svg"
-                                        alt="collapse arrow"
-                                        width={20}
-                                        height={20}
-                                        className={`gl-collapse-icon${isCollapsed ? " gl-collapse-icon--closed" : ""}`}
-                                    />
-                                </button>
+                                <span className={`gl-circle${isDone ? " gl-circle--checked" : ""}`}>
+                                    {isDone && (
+                                        <Image
+                                            src="/done_28dp_FFFFFF.svg"
+                                            alt="checked"
+                                            width={12}
+                                            height={12}
+                                            className="gl-check-icon"
+                                        />
+                                    )}
+                                </span>
 
-                                {/* Items are hidden when the category is collapsed */}
-                                {!isCollapsed && group.items.map((item) => {
-                                    const isDone = checked.has(item.id);
-                                    return (
-                                        <button
-                                            type="button"
-                                            key={item.id}
-                                            className={`gl-item${isDone ? " gl-item--checked" : ""}`}
-                                            onClick={() => toggle(item.id)}
-                                        >
-                                            {/* Checkbox circle - fills green when checked */}
-                                            <span className={`gl-circle${isDone ? " gl-circle--checked" : ""}`}>
-                                                {isDone && (
-                                                    <Image
-                                                        src="/done_28dp_FFFFFF.svg"
-                                                        alt="checked"
-                                                        width={12}
-                                                        height={12}
-                                                        className="gl-check-icon"
-                                                    />
-                                                )}
-                                            </span>
+                                <span className="gl-item-info">
+                                    <span className="gl-item-name">{item.name}</span>
+                                    <span className="gl-item-aisle">{item.location}</span>
+                                </span>
 
-                                            {/* Item name and aisle location */}
-                                            <span className="gl-item-info">
-                                                <span className="gl-item-name">{item.name}</span>
-                                                <span className="gl-item-aisle">{item.location}</span>
-                                            </span>
-
-                                            {/* Short aisle code badge, for example A1, PROD, MEAT */}
-                                            <span className="gl-aisle-code">{item.code}</span>
-                                        </button>
-                                    );
-                                })}
-                            </div>
+                                <span className="gl-aisle-code">{item.code}</span>
+                            </button>
                         );
                     })
                 )}

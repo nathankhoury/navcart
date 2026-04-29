@@ -39,10 +39,9 @@ export default function Help() {
                         <h2 className="help-section-title">📋 Grocery List</h2>
                         <p className="help-section-text">
                             The grocery list appears on the left side of the store map.
-                            It shows all the items you have added, grouped by category.
+                            It shows all the items you have added, grouped by the order indicated by the route.
                             You can tap any item to check it off as you pick it up.
                             Checked items are crossed out and faded so you always know what is left.
-                            You can also collapse a category by tapping its header to keep the list tidy.
                         </p>
                     </section>
 
@@ -54,7 +53,11 @@ export default function Help() {
                         <p className="help-section-text">
                             The store map shows the layout of your selected store and highlights
                             the most optimal route to collect all your items with the least amount
-                            of walking. The route updates automatically based on what is in your list.
+                            of walking. The route updates automatically based on what is remaining in 
+                            your list (i.e. unchecked items). In the case that you don't want to see
+                            the suggested route, you can choose to toggle the route off and just see the
+                            outlines of relevant aisles. If the route is enabled, the current aisle to 
+                            head to will be indicated by a green outline around said aisle/dept.
                         </p>
                     </section>
 
@@ -68,7 +71,8 @@ export default function Help() {
                             Search for any item by name or category, then click it to add it to your list.
                             You can also remove individual items by clicking them in your list,
                             or use the buttons at the top to save your list for later, load a
-                            previously saved list, or clear everything and start fresh.
+                            previously saved list, or clear everything and start fresh. Undoing an action 
+                            with the undo button will undo your most recent addition/deletion.
                         </p>
                     </section>
 
@@ -78,7 +82,7 @@ export default function Help() {
                     <section className="help-section">
                         <h2 className="help-section-title">👤 Profile & Settings</h2>
                         <p className="help-section-text">
-                            The Profile page lets you manage your account and customize your experience.
+                            The Profile page lets you manage your account and customize your experience further.
                         </p>
                     </section>
 
@@ -90,7 +94,8 @@ export default function Help() {
                         <p className="help-section-text">
                             Use the dropdown in the top navigation bar to select your store location.
                             Aisle information and the store map are specific to each location,
-                            so make sure to select the right store before you start shopping.
+                            so make sure to select the right store before you start shopping. More
+                            locations coming in the future hopefully :)
                         </p>
                     </section>
 

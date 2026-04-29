@@ -88,6 +88,12 @@ export default function StoreMap() {
     const [selectedItems, setSelectedItems] = useState<GroceryItem[]>([]);
     const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
     const [routeGenerated, setRouteGenerated] = useState(false);
+    // prevent "hydration error" that was occuring, still not fully sure what or why
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
 
     useEffect(() => {
         const loadCurrentList = () => {
@@ -156,7 +162,7 @@ export default function StoreMap() {
     const highlightedCodes = useMemo(() => {
         return new Set(routeItems.map((item) => item.code).filter(Boolean));
     }, [routeItems]);
-
+    
     const highlightedSections = useMemo(() => {
         return marketBasketSections.filter((section) =>
             highlightedCodes.has(section.code)
@@ -310,6 +316,10 @@ export default function StoreMap() {
 
     const currentStop = routeSections.length > 1 ? routeSections[1] : null;
     const nextStop = routeSections.length > 2 ? routeSections[2] : null;
+
+    if (!mounted) {
+        return null;
+    }
 
     return (
         <section className="w-full">
