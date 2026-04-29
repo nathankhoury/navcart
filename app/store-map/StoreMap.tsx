@@ -59,6 +59,31 @@ function getSectionPriority(section: StoreSection): number {
     return 999;
 }
 
+function isAisle(section: StoreSection): boolean {
+    return getAisleNumber(section.code) !== null;
+}
+
+function getAisleEntryPoint(section: StoreSection, fromTop: boolean): RoutePoint {
+    return {
+        x: section.x + section.width / 2,
+        y: fromTop ? section.y : section.y + section.height,
+    };
+}
+
+function getAisleExitPoint(section: StoreSection, enteredFromTop: boolean): RoutePoint {
+    return {
+        x: section.x + section.width / 2,
+        y: enteredFromTop ? section.y + section.height : section.y,
+    };
+}
+
+function getCheckoutEntryPoint(section: StoreSection): RoutePoint {
+    return {
+        x: section.x + section.width / 2,
+        y: section.y,
+    };
+}
+
 export default function StoreMap() {
     const [selectedItems, setSelectedItems] = useState<GroceryItem[]>([]);
     const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
@@ -153,83 +178,131 @@ export default function StoreMap() {
             (section) => !["REG", "ENT_S", "ENT_E"].includes(section.code)
         );
 
-        const sortedSections = [...sectionsWithoutSpecialNodes].sort((a, b) => {
-            const priorityDiff = getSectionPriority(a) - getSectionPriority(b);
-            if (priorityDiff !== 0) return priorityDiff;
-            return a.x - b.x;
-        });
-
-        if (sortedSections.length === 0) {
+        if (sectionsWithoutSpecialNodes.length === 0) {
             return [];
         }
 
-        const firstStop = getCenter(sortedSections[0]);
-
+        // Pick a starting entrance based on which entrance is closest
+        // to any item on the route.
         let chosenEntrance: StoreSection | undefined = southEntrance;
-
+        
         if (southEntrance && eastEntrance) {
-            const southDistance = distance(getCenter(southEntrance), firstStop);
-            const eastDistance = distance(getCenter(eastEntrance), firstStop);
-            chosenEntrance = southDistance <= eastDistance ? southEntrance : eastEntrance;
-        } else if (eastEntrance) {
-            chosenEntrance = eastEntrance;
+            const closestToSouth = Math.min(
+                ...sectionsWithoutSpecialNodes.map((section) =>
+                    distance(getCenter(southEntrance), getCenter(section))
+            )
+        );
+
+        const closestToEast = Math.min(
+            ...sectionsWithoutSpecialNodes.map((section) =>
+                distance(getCenter(eastEntrance), getCenter(section))
+        )
+    );
+    
+        chosenEntrance = closestToSouth <= closestToEast ? southEntrance : eastEntrance;
+    } else if (eastEntrance) {
+        chosenEntrance = eastEntrance;
+    }
+
+        // Nearest-neighbor route:
+        // Each next stop is the closest remaining section.
+        const sortedSections: StoreSection[] = [];
+        const remainingSections = [...sectionsWithoutSpecialNodes];
+
+        let currentPoint = chosenEntrance
+            ? getCenter(chosenEntrance)
+            : getCenter(remainingSections[0]);
+
+        while (remainingSections.length > 0) {
+            let closestIndex = 0;
+            let closestDistance = distance(
+                currentPoint,
+                getCenter(remainingSections[0])
+            );
+            
+            for (let i = 1; i < remainingSections.length; i++) {
+                const sectionDistance = distance(
+                    currentPoint,
+                    getCenter(remainingSections[i])
+                );
+                
+                if (sectionDistance < closestDistance) {
+                    closestDistance = sectionDistance;
+                    closestIndex = i;
+                }
+            }
+
+            const [closestSection] = remainingSections.splice(closestIndex, 1);
+            sortedSections.push(closestSection);
+            currentPoint = getCenter(closestSection);
         }
 
         return [chosenEntrance, ...sortedSections, checkout].filter(
             Boolean
         ) as StoreSection[];
     }, [highlightedSections, routeGenerated]);
-
+    
     const routePoints = useMemo((): RoutePoint[] => {
         if (routeSections.length === 0) return [];
-
         const bottomLaneY = 530;
         const topLaneY = 120;
-
+        
         const points: RoutePoint[] = [];
-        const start = getCenter(routeSections[0]);
-        points.push(start);
+        let lastPoint = getCenter(routeSections[0]);
 
+        points.push(lastPoint);
+        
         for (let i = 1; i < routeSections.length; i++) {
-            const current = routeSections[i - 1];
-            const next = routeSections[i];
-
+            const current = routeSections[i];
             const currentCenter = getCenter(current);
-            const nextCenter = getCenter(next);
 
-            const nextIsTopDepartment = ["BAKE", "DELI", "MEAT", "DAIRY"].includes(
-                next.code
+            const currentIsAisle = isAisle(current);
+            const previousPoint = points[points.length - 1];
+
+            if (currentIsAisle) {
+                const distanceToTop = Math.abs(previousPoint.y - current.y);
+                const distanceToBottom = Math.abs(
+                    previousPoint.y - (current.y + current.height)
+                );
+                
+                const enterFromTop = distanceToTop < distanceToBottom;
+
+                const entryPoint = getAisleEntryPoint(current, enterFromTop);
+                const exitPoint = getAisleExitPoint(current, enterFromTop);
+
+                const laneY = enterFromTop ? topLaneY : bottomLaneY;
+
+                points.push({ x: previousPoint.x, y: laneY });
+                points.push({ x: entryPoint.x, y: laneY });
+                points.push(entryPoint);
+                points.push(exitPoint);
+
+                lastPoint = exitPoint;
+            } else {
+                if (current.code === "REG") {
+                    const checkoutPoint = getCheckoutEntryPoint(current);
+                    
+                    points.push({ x: lastPoint.x, y: bottomLaneY });
+                points.push({ x: checkoutPoint.x, y: bottomLaneY });
+                points.push(checkoutPoint);
+
+                lastPoint = checkoutPoint;
+                continue;
+            }
+            const currentIsTopDepartment = ["BAKE", "DELI", "MEAT", "DAIRY"].includes(
+                current.code
             );
+            const laneY = currentIsTopDepartment ? topLaneY : bottomLaneY;
 
-            const laneY = nextIsTopDepartment ? topLaneY : bottomLaneY;
+            points.push({ x: lastPoint.x, y: laneY });
+            points.push({ x: currentCenter.x, y: laneY });
+            points.push(currentCenter);
 
-            const currentLanePoint = { x: currentCenter.x, y: laneY };
-            const nextLanePoint = { x: nextCenter.x, y: laneY };
-
-            if (
-                points[points.length - 1].x !== currentLanePoint.x ||
-                points[points.length - 1].y !== currentLanePoint.y
-            ) {
-                points.push(currentLanePoint);
-            }
-
-            if (
-                points[points.length - 1].x !== nextLanePoint.x ||
-                points[points.length - 1].y !== nextLanePoint.y
-            ) {
-                points.push(nextLanePoint);
-            }
-
-            if (
-                points[points.length - 1].x !== nextCenter.x ||
-                points[points.length - 1].y !== nextCenter.y
-            ) {
-                points.push(nextCenter);
-            }
-        }
-
-        return points;
-    }, [routeSections]);
+            lastPoint = currentCenter;
+        } 
+    }
+    return points;
+}, [routeSections]);
 
     const polylinePoints = routePoints
         .map((point) => `${point.x},${point.y}`)
@@ -245,13 +318,23 @@ export default function StoreMap() {
                     <p>No items currently selected. Go to Manage List to add items.</p>
                 ) : routeItems.length === 0 ? (
                     <p>All items on your current list have been checked off.</p>
-                ) : (
-                    <p>
-                        {routeItems.length} remaining item
-                        {routeItems.length === 1 ? "" : "s"} available for routing.
-                    </p>
-                )}
-            </div>
+                ) : routeGenerated && routeSections.length > 0 ? (
+                <p>
+                    Route:{" "}
+                    {routeSections.map((section, index) => (
+                        <span key={section.id}>
+                            {section.label}
+                            {index < routeSections.length - 1 && " → "}
+                            </span>
+                        ))}
+                        </p>
+                        ) : (
+                        <p>
+                            {routeItems.length} remaining item
+                            {routeItems.length === 1 ? "" : "s"} available for routing.
+                            </p>
+                        )}
+                        </div>
 
             <div className="mb-4 flex gap-3">
                 <button
@@ -263,11 +346,16 @@ export default function StoreMap() {
                 </button>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-hidden md:h-auto h-[300px]">
                 <div
-                    className="relative mx-auto rounded-lg border-2 border-gray-400 bg-gray-50"
-                    style={{ width: "1100px", height: "650px" }}
-                >
+                className="relative mx-auto rounded-lg border-2 border-gray-400 bg-gray-50 md:scale-100 scale-[0.43] origin-top-left"
+                style={{
+                    width: "1100px",
+                    height: "650px",
+                    transform: "scale(0.785)",
+                    transformOrigin: "top left",
+                }}
+    >
                     <svg
                         className="absolute left-0 top-0 pointer-events-none"
                         width="1100"
@@ -275,15 +363,14 @@ export default function StoreMap() {
                     >   
                         {routePoints.length >= 2 && (
                             <polyline
-                                points={polylinePoints}
-                                fill="none"
-                                stroke="#2563eb"
-                                strokeWidth="4"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeDasharray="8 6"
+                            points={polylinePoints}
+                            fill="none"
+                            stroke="#2563eb"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
                             />
-                        )}
+                            )}
 
                         {routeSections.map((section, index) => {
                             const point = getCenter(section);
